@@ -3,35 +3,35 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import Hero from "@/components/product/mobile-development/hero";
-import ValueProps from "@/components/product/mobile-development/ValueProps";
-import Features from "@/components/product/mobile-development/Features";
-import Gallery from "@/components/product/mobile-development/Gallery";
-import Testimonials from "@/components/product/mobile-development/Testimonials";
-import Comparison from "@/components/product/mobile-development/Comparison";
-import Pricing from "@/components/product/mobile-development/Pricing";
-import FAQ from "@/components/product/mobile-development/FAQ";
-import FinalCTA from "@/components/product/mobile-development/FinalCTA";
+import Hero from "@/components/product/mobile-development_old/hero";
+import ValueProps from "@/components/product/mobile-development_old/ValueProps";
+import Features from "@/components/product/mobile-development_old/Features";
+import Gallery from "@/components/product/mobile-development_old/Gallery";
+import Testimonials from "@/components/product/mobile-development_old/Testimonials";
+import Comparison from "@/components/product/mobile-development_old/Comparison";
+import Pricing from "@/components/product/mobile-development_old/Pricing";
+import FAQ from "@/components/product/mobile-development_old/FAQ";
+import FinalCTA from "@/components/product/mobile-development_old/FinalCTA";
 
 import type { ProductPageData } from "@/types/product";
 
-// -----------------------------------------------------------------------------
-// FORCE STATIC
-// -----------------------------------------------------------------------------
 export const dynamic = "force-static";
 
-// -----------------------------------------------------------------------------
-// DATABASE (PRODUTOS REGISTRADOS)
-// -----------------------------------------------------------------------------
+export function generateStaticParams() {
+  return [
+    { slug: "mobile-development" },
+    { slug: "web-development" },
+    { slug: "ai-automation" },
+  ];
+}
 
-// ⚠️ Você pode mover isso para um arquivo externo depois
-const products: Record<string, ProductPageData> = {
+export const PRODUCTS: Record<string, ProductPageData> = {
   "mobile-development": {
     slug: "mobile-development",
     title:
-      "Aplicativos mobile que parecem mágica, mas foram desenhados para performance.",
+      "Aplicativos mobile que parecem magia, mas foram desenhados para performance.",
     subtitle:
-      "Da ideia ao app publicado, a LHWEB projeta, desenvolve e otimiza aplicativos mobile focados em retenção, conversão e escala — sem fricção para o usuário e sem caos para o seu time.",
+      "Da ideia ao app publicado, a LHWEB projeta, desenvolve e otimiza aplicativos focados em retenção, conversão e escala — sem fricção para o usuário e sem caos para o seu time.",
     heroLabel: "Mobile Product Experience",
     heroBenefit: "Projetado para escalar em iOS, Android e além.",
     tags: [
@@ -43,7 +43,6 @@ const products: Record<string, ProductPageData> = {
     secondaryCta: "Ver roadmap de entrega",
     trustBar:
       "Produtos usados em múltiplos países, por times reais — não apenas em apresentações.",
-
     valueProps: [
       {
         id: "performance",
@@ -74,7 +73,6 @@ const products: Record<string, ProductPageData> = {
         icon: "trending-up",
       },
     ],
-
     features: [
       {
         id: "product-strategy",
@@ -119,7 +117,6 @@ const products: Record<string, ProductPageData> = {
         highlight: "Parceria de longo prazo.",
       },
     ],
-
     images: [
       {
         id: "hero-mobile-dashboard",
@@ -135,7 +132,6 @@ const products: Record<string, ProductPageData> = {
         alt: "Tela mobile de analytics",
       },
     ],
-
     testimonials: [
       {
         id: "lorys",
@@ -148,16 +144,16 @@ const products: Record<string, ProductPageData> = {
       },
       {
         id: "pag-si",
-        name: "Página Si",
+        name: "Pag Si",
         role: "Agência Digital",
         company: "Itália",
         result: "-45% tempo operacional",
         quote:
-          "Os fluxos automatizados reduziram trabalho manual e tornaram tudo mais rápido para os clientes finais.",
+          "Fluxos automatizados reduziram trabalho manual e tornaram tudo mais rápido para os clientes finais.",
       },
       {
         id: "retail-labs",
-        name: "All Retail Labs",
+        name: "AI Retail Labs",
         role: "Retail Intelligence",
         company: "Europa",
         result: "+28% velocidade de entrega",
@@ -165,7 +161,6 @@ const products: Record<string, ProductPageData> = {
           "Agora conseguimos lançar novas features mobile com muito mais velocidade e estabilidade.",
       },
     ],
-
     comparison: {
       before: {
         title: "Antes da LHWEB",
@@ -186,7 +181,6 @@ const products: Record<string, ProductPageData> = {
         ],
       },
     },
-
     pricing: [
       {
         id: "launch",
@@ -233,7 +227,6 @@ const products: Record<string, ProductPageData> = {
         ctaLabel: "Falar com o time",
       },
     ],
-
     faq: [
       {
         id: "scope",
@@ -269,7 +262,7 @@ const products: Record<string, ProductPageData> = {
       {
         id: "ai",
         question: "Vocês implementam IA dentro do app?",
-        answer: "Sim. IA para recomendações, automação, personalização.",
+        answer: "Sim. IA para recomendações, automação e personalização.",
       },
       {
         id: "next",
@@ -278,7 +271,6 @@ const products: Record<string, ProductPageData> = {
           "Agendar um diagnóstico do app para definirmos juntos o plano ideal.",
       },
     ],
-
     finalCta: {
       title: "Pronto para levar seu produto mobile ao próximo nível?",
       subtitle:
@@ -289,26 +281,389 @@ const products: Record<string, ProductPageData> = {
         "Atendimento em PT / EN. Projetos para Brasil, Irlanda e Europa.",
     },
   },
+  "web-development": {
+    slug: "web-development",
+    title: "Web experiences rápidas, seguras e prontas para converter.",
+    subtitle:
+      "Sites, portais e plataformas web com foco em performance, SEO e acessibilidade — construídos para escalar e vender.",
+    heroLabel: "Web Platform Experience",
+    heroBenefit: "Alta conversão, SEO técnico e escalabilidade.",
+    tags: [
+      { label: "Next.js & Edge" },
+      { label: "Design System" },
+      { label: "SEO & Performance" },
+    ],
+    primaryCta: "Planejar meu projeto web",
+    secondaryCta: "Ver portfólio",
+    trustBar:
+      "Webapps entregues para e-commerce, SaaS e enterprise em 5+ países.",
+    valueProps: [
+      {
+        id: "seo",
+        title: "SEO e Core Web Vitals no topo.",
+        description:
+          "Arquitetura e otimizações para LCP, CLS e TTFB em níveis de referência.",
+        icon: "search",
+      },
+      {
+        id: "design-system",
+        title: "Design System reutilizável.",
+        description:
+          "Componentes consistentes, acessíveis e rápidos para manter o produto evoluindo.",
+        icon: "palette",
+      },
+      {
+        id: "edge",
+        title: "Edge & caching inteligentes.",
+        description:
+          "Entrega global com Vercel/Edge Functions para latência mínima.",
+        icon: "server",
+      },
+      {
+        id: "analytics",
+        title: "Métricas claras de negócio.",
+        description:
+          "Eventos, funnels e dashboards para acompanhar conversão e retenção.",
+        icon: "bar-chart",
+      },
+    ],
+    features: [
+      {
+        id: "architecture",
+        title: "Arquitetura moderna",
+        description:
+          "Next.js 14, turbopack e edge-ready para crescer sem gargalos.",
+        highlight: "Performance e segurança.",
+      },
+      {
+        id: "ux-ui",
+        title: "UX/UI orientado a conversão",
+        description:
+          "Fluxos claros, CTAs fortes e micro-interações que guiam o usuário.",
+        highlight: "Conversão em primeiro lugar.",
+      },
+      {
+        id: "cms",
+        title: "Headless CMS & integrações",
+        description:
+          "Conteúdo gerenciável, APIs unificadas e automações de marketing.",
+        highlight: "Escala sem complicação.",
+      },
+      {
+        id: "a11y",
+        title: "Acessibilidade real",
+        description:
+          "Padrões WCAG, navegação por teclado e otimização para leitores de tela.",
+        highlight: "Inclusivo por padrão.",
+      },
+      {
+        id: "observability",
+        title: "Observabilidade completa",
+        description:
+          "Logs, métricas e alertas para manter a operação saudável.",
+        highlight: "Menos incidentes, mais previsibilidade.",
+      },
+      {
+        id: "rollouts",
+        title: "Rollouts seguros",
+        description:
+          "Feature flags, testes A/B e monitoramento contínuo após deploy.",
+        highlight: "Lançamentos sem risco.",
+      },
+    ],
+    images: [
+      { id: "web-hero", alt: "Landing page moderna com charts" },
+      { id: "web-dashboard", alt: "Dashboard web com métricas" },
+      { id: "web-components", alt: "Biblioteca de componentes web" },
+    ],
+    testimonials: [
+      {
+        id: "saas",
+        name: "SaaS B2B",
+        role: "Chief Product Officer",
+        company: "Europa",
+        result: "+38% conversão orgânica",
+        quote:
+          "A nova experiência web trouxe SEO técnico impecável e um ganho direto em leads qualificados.",
+      },
+      {
+        id: "fintech",
+        name: "Fintech",
+        role: "Head de Marketing",
+        company: "Brasil",
+        result: "+24% velocidade de carregamento",
+        quote:
+          "Performance e consistência visual aumentaram a confiança do usuário em todas as páginas.",
+      },
+    ],
+    comparison: {
+      before: {
+        title: "Antes da LHWEB",
+        items: [
+          "Páginas lentas e mal indexadas.",
+          "Layout inconsistente entre squads.",
+          "Dependência de engenharia para publicar conteúdo.",
+          "Pouca visibilidade de métricas.",
+        ],
+      },
+      after: {
+        title: "Depois da LHWEB",
+        items: [
+          "Core Web Vitals no verde.",
+          "Design System unificado.",
+          "CMS e fluxos automatizados.",
+          "Dashboards de conversão e growth.",
+        ],
+      },
+    },
+    pricing: [
+      {
+        id: "landing",
+        name: "Landing Pro",
+        description: "Landing page premium otimizada para conversão.",
+        price: "A partir de €6k",
+        priceNote: "4 a 6 semanas",
+        features: ["UX/UI", "SEO técnico", "Setup de analytics", "Deploy edge"],
+        ctaLabel: "Planejar landing",
+      },
+      {
+        id: "platform",
+        name: "Web Platform",
+        highlight: true,
+        description: "Plataformas e portais com conteúdo dinâmico.",
+        price: "Sob consulta",
+        priceNote: "Projeto completo",
+        features: [
+          "Arquitetura Next.js",
+          "Design System",
+          "Headless CMS",
+          "A/B tests e monitoramento",
+        ],
+        ctaLabel: "Falar com especialista",
+      },
+    ],
+    faq: [
+      {
+        id: "cms",
+        question: "Vocês trabalham com qual CMS?",
+        answer:
+          "Headless CMS (ex: Sanity, Contentful, Strapi) ou o que você já usa.",
+      },
+      {
+        id: "seo",
+        question: "O projeto já vem otimizado para SEO?",
+        answer: "Sim, incluímos SEO técnico, sitemaps, schema e performance.",
+      },
+      {
+        id: "handoff",
+        question: "Entrega inclui design system?",
+        answer: "Sim, bibliotecas de componentes reutilizáveis e documentadas.",
+      },
+    ],
+    finalCta: {
+      title: "Vamos acelerar seu produto web?",
+      subtitle:
+        "Conte seu objetivo e desenhamos um plano claro com prazos, stack e roadmap.",
+      primaryCta: "Iniciar meu projeto web",
+      secondaryCta: "Ver cases",
+      trustNote: "Projetos entregues para SaaS, fintechs e e-commerce.",
+    },
+  },
+  "ai-automation": {
+    slug: "ai-automation",
+    title: "Soluções de IA e automação para escalar operação e receita.",
+    subtitle:
+      "Chatbots, copilots internos, automações de backoffice e integrações de dados com IA — desenhados para reduzir custo e aumentar velocidade.",
+    heroLabel: "AI & Automation Experience",
+    heroBenefit: "Automação ponta a ponta com segurança e governança.",
+    tags: [
+      { label: "LLMs & LangChain" },
+      { label: "Process Automation" },
+      { label: "Data & Analytics" },
+    ],
+    primaryCta: "Explorar automação com IA",
+    secondaryCta: "Ver casos de uso",
+    trustBar: "Projetos entregues para operações em LATAM, EUA e Europa.",
+    valueProps: [
+      {
+        id: "copilots",
+        title: "Copilots para times internos.",
+        description:
+          "Assistentes que pesquisam dados, geram respostas e executam ações com segurança.",
+        icon: "bot",
+      },
+      {
+        id: "workflows",
+        title: "Workflows automatizados.",
+        description:
+          "Integrações entre CRM, billing, suporte e analytics para cortar trabalho manual.",
+        icon: "workflow",
+      },
+      {
+        id: "data",
+        title: "Dados governados e rastreáveis.",
+        description:
+          "Observabilidade, logs e controles de acesso para IA com compliance.",
+        icon: "shield",
+      },
+      {
+        id: "roi",
+        title: "ROI em semanas, não meses.",
+        description:
+          "Pilotos rápidos, métricas claras de ganho de tempo e redução de custo.",
+        icon: "trending-up",
+      },
+    ],
+    features: [
+      {
+        id: "discovery",
+        title: "IA Discovery",
+        description:
+          "Mapeamos processos e priorizamos onde IA gera mais impacto.",
+        highlight: "Quick wins em semanas.",
+      },
+      {
+        id: "chatbots",
+        title: "Chatbots e copilots",
+        description:
+          "Assistentes para suporte, vendas ou operação conectados às suas fontes de dados.",
+        highlight: "Contexto real do negócio.",
+      },
+      {
+        id: "automation",
+        title: "Automação de backoffice",
+        description:
+          "Workflows em Make/Zapier/temporal + integrações customizadas.",
+        highlight: "Menos trabalho manual.",
+      },
+      {
+        id: "observability",
+        title: "Observabilidade de IA",
+        description:
+          "Monitoramento de prompts, custos e qualidade das respostas.",
+        highlight: "Governança e segurança.",
+      },
+      {
+        id: "experiments",
+        title: "Experimentação contínua",
+        description:
+          "AB tests, feedback loops e afinamento de prompts/modelos.",
+        highlight: "Melhoria constante.",
+      },
+    ],
+    images: [
+      { id: "ai-dashboard", alt: "Dashboard de IA e automação" },
+      { id: "ai-chat", alt: "Interface de chatbot com IA" },
+      { id: "ai-workflow", alt: "Workflow automatizado com IA" },
+    ],
+    testimonials: [
+      {
+        id: "support",
+        name: "Suporte Global",
+        role: "Head of CS",
+        company: "LATAM",
+        result: "-55% tempo por ticket",
+        quote:
+          "O copiloto entende contexto, consulta dados e responde clientes com qualidade superior.",
+      },
+      {
+        id: "ops",
+        name: "Operações",
+        role: "COO",
+        company: "EUA",
+        result: "+40% velocidade em processos",
+        quote:
+          "Automatizamos reconciliações e notificações. O time agora foca em decisões, não em tarefas repetitivas.",
+      },
+    ],
+    comparison: {
+      before: {
+        title: "Antes da LHWEB",
+        items: [
+          "Processos manuais e desconectados.",
+          "Decisões sem dados em tempo real.",
+          "Custos altos de operação.",
+          "Time sobrecarregado com tarefas repetitivas.",
+        ],
+      },
+      after: {
+        title: "Depois da LHWEB",
+        items: [
+          "Workflows automatizados ponta a ponta.",
+          "Dados centralizados e acessíveis via copilots.",
+          "Redução de custo e aumento de velocidade.",
+          "Equipe focada em estratégia e crescimento.",
+        ],
+      },
+    },
+    pricing: [
+      {
+        id: "pilot",
+        name: "AI Pilot",
+        description: "Prova de conceito com caso de uso prioritário.",
+        price: "A partir de €7k",
+        priceNote: "4 a 6 semanas",
+        features: [
+          "Discovery e mapeamento de dados",
+          "Copilot ou automação prioritária",
+          "Monitoramento básico",
+          "Treinamento do time",
+        ],
+        ctaLabel: "Iniciar piloto",
+      },
+      {
+        id: "scale",
+        name: "Automation Scale",
+        highlight: true,
+        description: "Expansão de automações e copilots com governança.",
+        price: "Sob consulta",
+        priceNote: "Modelo mensal",
+        features: [
+          "Múltiplos casos de uso",
+          "Observabilidade e guardrails",
+          "Suporte contínuo",
+          "AB tests e otimizações",
+        ],
+        ctaLabel: "Planejar rollout",
+      },
+    ],
+    faq: [
+      {
+        id: "privacy",
+        question: "Como vocês tratam dados sensíveis?",
+        answer:
+          "Aplicamos controle de acesso, logging, anonimização quando necessário e políticas de retenção.",
+      },
+      {
+        id: "models",
+        question: "Quais modelos de IA são usados?",
+        answer:
+          "Selecionamos provedores (OpenAI, Anthropic, Azure, etc.) conforme caso de uso, custo e compliance.",
+      },
+      {
+        id: "integration",
+        question: "Vocês integram com nossos sistemas internos?",
+        answer:
+          "Sim. Conectamos a CRMs, ERPs, billing, bancos de dados e APIs proprietárias.",
+      },
+    ],
+    finalCta: {
+      title: "Pronto para automatizar com IA?",
+      subtitle:
+        "Conte o processo que mais consome tempo hoje. Em 24h sugerimos um piloto com ROI claro.",
+      primaryCta: "Explorar automação",
+      secondaryCta: "Ver casos",
+      trustNote: "Governança e segurança incluídas desde o primeiro piloto.",
+    },
+  },
 };
-
-// -----------------------------------------------------------------------------
-// ROTAS ESTÁTICAS (OBRIGATÓRIO PARA [slug])
-// -----------------------------------------------------------------------------
-
-export function generateStaticParams() {
-  return Object.keys(products).map((slug) => ({ slug }));
-}
-
-// -----------------------------------------------------------------------------
-// SEO DINÂMICO
-// -----------------------------------------------------------------------------
 
 export function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }): Metadata {
-  const product = products[params.slug];
+  const product = PRODUCTS[params.slug];
 
   if (!product)
     return {
@@ -322,12 +677,8 @@ export function generateMetadata({
   };
 }
 
-// -----------------------------------------------------------------------------
-// PAGE
-// -----------------------------------------------------------------------------
-
 export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = products[params.slug];
+  const product = PRODUCTS[params.slug];
 
   if (!product) return notFound();
 
