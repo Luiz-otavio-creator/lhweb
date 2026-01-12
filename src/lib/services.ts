@@ -148,7 +148,7 @@ export const services: ServiceDetail[] = [
     ],
   },
   {
-    slug: "mobile-development",
+    slug: "app-development",
     name: "App Development",
     label: "Mobile & PWA",
     icon: "phone",
