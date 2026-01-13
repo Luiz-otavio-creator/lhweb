@@ -9,10 +9,11 @@ import {
   AnimatePresence,
   useInView,
   useMotionValue,
+  useAnimationControls,
   useTransform,
   easeOut,
 } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -132,6 +133,86 @@ const heroFadeUp: Variants = {
   },
 };
 
+function CompanyMarquee() {
+  const controls = useAnimationControls();
+  const DURATION = 18;
+
+  const companyLogos = [
+    // Add/remove logos here.
+    { src: "/companys/babita.png", alt: "Babita logo" },
+    { src: "/companys/brilhodemulher.png", alt: "Brilho de Mulher logo" },
+    { src: "/companys/brilhointimo.png", alt: "Brilho Intimo logo" },
+    { src: "/companys/criswinter.png", alt: "Cris Winter logo" },
+    { src: "/companys/deissy.png", alt: "Deissy logo" },
+    { src: "/companys/fetelle.png", alt: "Fetelle logo" },
+    { src: "/companys/fitsgym.png", alt: "Fits Gym logo" },
+    { src: "/companys/horadosono.png", alt: "Hora do Sono logo" },
+    { src: "/companys/jussilly.png", alt: "Jussilly logo" },
+    { src: "/companys/kallifon.png", alt: "Kallifon logo" },
+    { src: "/companys/lindaseducao.png", alt: "Linda Seducao logo" },
+    { src: "/companys/mercado.png", alt: "Mercado logo" },
+    { src: "/companys/oficina.png", alt: "Oficina logo" },
+    { src: "/companys/ouseuse.png", alt: "Ouseuse logo" },
+    { src: "/companys/tereza.png", alt: "Tereza logo" },
+    { src: "/companys/useintuicao.png", alt: "Use Intuicao logo" },
+  ];
+
+  const MIN_LOGOS = 6;
+  const baseLogos =
+    companyLogos.length === 0
+      ? []
+      : companyLogos.length >= MIN_LOGOS
+        ? companyLogos
+        : Array.from({
+            length: Math.ceil(MIN_LOGOS / companyLogos.length),
+          }).flatMap(() => companyLogos);
+  const marqueeLogos = [...baseLogos, ...baseLogos];
+
+  const startAnimation = useCallback(() => {
+    void controls.start({
+      x: "-50%",
+      transition: { duration: DURATION, ease: "linear", repeat: Infinity },
+    });
+  }, [controls]);
+
+  useEffect(() => {
+    startAnimation();
+  }, [startAnimation]);
+
+  return (
+    <div
+      className="relative mt-4 h-14 overflow-hidden sm:h-16"
+      role="region"
+      aria-label="Company logos marquee"
+    >
+      <motion.div
+        className="flex w-max items-center gap-4"
+        animate={controls}
+        initial={{ x: 0 }}
+        onHoverStart={() => controls.stop()}
+        onHoverEnd={startAnimation}
+        onPointerLeave={startAnimation}
+        onPointerCancel={startAnimation}
+      >
+        {marqueeLogos.map((logo, index) => (
+          <Image
+            key={`${logo.src}-${index}`}
+            src={logo.src}
+            alt={logo.alt}
+            width={160}
+            height={64}
+            className="h-9 w-auto max-w-[140px] object-contain opacity-90 sm:h-10"
+            aria-hidden={index >= baseLogos.length}
+          />
+        ))}
+      </motion.div>
+
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#050914] to-transparent sm:w-16" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#050914] to-transparent sm:w-16" />
+    </div>
+  );
+}
+
 function Hero() {
   return (
     <section
@@ -155,17 +236,16 @@ function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2 md:gap-16 lg:px-10">
-        {/* Left Side */}
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-10 px-6 text-center md:gap-12 lg:px-10">
         <motion.div
-          className="space-y-7"
+          className="w-full max-w-3xl space-y-6 md:space-y-7"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.4 }}
         >
           <motion.h1
             variants={heroFadeUp}
-            className="text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl"
+            className="text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl lg:text-6xl"
           >
             We build high-performance websites, apps, and AI-powered
             experiences.
@@ -174,7 +254,7 @@ function Hero() {
           <motion.p
             variants={heroFadeUp}
             transition={{ delay: 0.12 }}
-            className="max-w-2xl text-base text-white/70 sm:text-lg"
+            className="mx-auto max-w-2xl text-sm text-white/70 sm:text-base md:text-lg"
           >
             From strategy to launch, we craft digital products designed to
             scale, convert, and automate.
@@ -183,12 +263,15 @@ function Hero() {
           <motion.div
             variants={heroFadeUp}
             transition={{ delay: 0.24 }}
-            className="flex flex-wrap items-center gap-4"
+            className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4"
           >
-            <Button className="bg-[#35f0ff] text-[#050914] shadow-[0_15px_40px_-10px_rgba(53,240,255,0.55)] hover:bg-[#32d8e5]">
+            <Button className="w-full bg-[#35f0ff] text-[#050914] shadow-[0_15px_40px_-10px_rgba(53,240,255,0.55)] hover:bg-[#32d8e5] sm:w-auto">
               Book a Free Consultation
             </Button>
-            <Button variant="ghost" className="text-white hover:bg-white/5">
+            <Button
+              variant="ghost"
+              className="w-full text-white hover:bg-white/5 sm:w-auto"
+            >
               See Our Work
             </Button>
           </motion.div>
@@ -202,21 +285,11 @@ function Hero() {
               Trusted by businesses in 5+ countries
             </span>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm text-white/70">
-              <span className="rounded-full border border-white/10 px-4 py-2 backdrop-blur">
-                Lory&apos;s
-              </span>
-              <span className="rounded-full border border-white/10 px-4 py-2 backdrop-blur">
-                PagSi
-              </span>
-              <span className="rounded-full border border-white/10 px-4 py-2 backdrop-blur">
-                AI RetailLabs
-              </span>
+            <div className="mx-auto w-full max-w-3xl">
+              <CompanyMarquee />
             </div>
           </motion.div>
         </motion.div>
-
-        {/* Right side completely removed (video is background now) */}
       </div>
     </section>
   );
@@ -305,7 +378,7 @@ function EnhancedCapabilities() {
                 delay: index * 0.08,
               }}
               className="
-                group flex h-full flex-col gap-5 rounded-3xl 
+                group flex h-full flex-col items-center gap-5 rounded-3xl 
                 border border-transparent 
                 bg-[#0a0d16]/80 
                 p-8 
@@ -316,21 +389,15 @@ function EnhancedCapabilities() {
                 hover:border
                 hover:border-[rgba(96,0,255,0.6)]
                 relative
+                text-center
               "
             >
               {/* Gradient border overlay */}
               <div className="pointer-events-none absolute inset-0 rounded-3xl border border-transparent bg-[linear-gradient(to_bottom_right,rgba(0,255,255,0.22),rgba(123,0,255,0.22))] opacity-30" />
 
-              <div className="relative flex items-center gap-4">
-                <div
-                  className="
-                    grid h-14 w-14 place-items-center 
-                    rounded-2xl bg-[#0f1120] 
-                    text-[#80f7ff] 
-                    shadow-[0_0_25px_rgba(0,255,255,0.5)]
-                  "
-                >
-                  <card.Icon className="h-7 w-7" strokeWidth={1.7} />
+              <div className="relative flex flex-col items-center gap-4">
+                <div className="grid h-14 w-14 place-items-center text-[#80f7ff]">
+                  <card.Icon className="h-12 w-12" strokeWidth={1.7} />
                 </div>
 
                 <h3 className="text-xl font-semibold text-white">
@@ -475,7 +542,7 @@ function WhyLHWEB() {
           {/* Feature box */}
           <motion.div
             variants={fadeUpWhy}
-            className="mt-6 w-full rounded-4xl border border-white/10 bg-white/5 p-8 shadow-[0_0_55px_rgba(0,0,0,0.45)] backdrop-blur-2xl"
+            className="mt-6 w-full rounded-4xl "
           >
             <div className="grid gap-10 sm:grid-cols-2">
               {features.map(({ title, desc, Icon }) => (
@@ -510,7 +577,7 @@ function WhyLHWEB() {
               alt="Hologram Gear"
               width={900}
               height={900}
-              className="pointer-events-none select-none object-contain drop-shadow-[0_0_65px_rgba(0,240,255,0.4)]"
+              
             />
           </div>
 
