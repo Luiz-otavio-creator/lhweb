@@ -3,7 +3,7 @@
 import Link from "next/link";
 import AppDevOrb from "@/components/visuals/AppDevOrb";
 import type { Variants } from "framer-motion";
-import { motion, useInView, easeOut } from "framer-motion";
+import { motion, useInView, easeOut, useReducedMotion } from "framer-motion";
 import { useMemo, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +13,6 @@ import {
   Globe,
   LayoutTemplate,
   Activity,
-  Sparkles,
   Search,
   PenTool,
   Code2,
@@ -28,6 +27,7 @@ import {
   Linkedin,
   Twitter,
 } from "lucide-react";
+import * as React from "react";
 
 /* ─────────────────────────────────────────────────────────────
    Motion helpers (typed)
@@ -97,18 +97,13 @@ export default function AppDevelopmentPage() {
 
 /* ─────────────────────────────────────────────────────────────
    HERO – Mobile-first (Text OVER Orb)
-   Goals:
-   - Orb central (hero visual)
-   - Text layered above orb (premium tech feel)
-   - Zero clipping
-   - Perfect readability
 ────────────────────────────────────────────────────────────── */
 function HeroAppDev() {
   return (
     <section
       id="hero"
       aria-label="App Development hero"
-      className="relative overflow-hidden bg-[#050812] pt-22 text-white md:pt-26"
+      className="relative overflow-hidden bg-[#050812] pt-24 text-white md:pt-28"
     >
       {/* BACKGROUND */}
       <div className="pointer-events-none absolute inset-0">
@@ -130,32 +125,26 @@ function HeroAppDev() {
             transition={{ duration: 0.55, ease: easeOut }}
             className="relative w-full max-w-[920px] overflow-visible pt-4 sm:pt-6 md:pt-8"
           >
-            {/* glow behind orb (tighter + more premium) */}
+            {/* glow behind orb */}
             <div className="pointer-events-none absolute left-1/2 top-[44%] h-[640px] w-[640px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(122,77,255,0.18),transparent_62%)] blur-[120px]" />
             <div className="pointer-events-none absolute left-1/2 top-[44%] h-[640px] w-[640px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(25,214,255,0.12),transparent_64%)] blur-[120px]" />
 
-            {/* ✅ Make orb slightly smaller so it doesn't crush the headline */}
+            {/* orb */}
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-              className="
-                relative mx-auto
-                w-full
-                max-w-[760px] sm:max-w-[780px] md:max-w-[820px]
-                -my-6 sm:-my-8 md:-my-10
-                overflow-visible
-              "
+              className="relative mx-auto w-full max-w-[760px] sm:max-w-[780px] md:max-w-[820px] -my-6 sm:-my-8 md:-my-10 overflow-visible"
             >
               <AppDevOrb />
             </motion.div>
 
-            {/* ✅ Smart contrast veil – centered behind TEXT zone, not the whole hero */}
+            {/* contrast veil behind TEXT zone */}
             <div className="pointer-events-none absolute left-1/2 top-[76%] h-[420px] w-[min(980px,100%)] -translate-x-1/2 -translate-y-1/2 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0.38)_45%,rgba(0,0,0,0)_72%)]" />
           </motion.div>
 
           {/* TEXT OVERLAY */}
           <div className="relative -mt-10 w-full max-w-4xl sm:-mt-12 md:-mt-14">
-            {/* ✅ subtle glass “haze card” behind copy (not a rectangle feel) */}
+            {/* haze behind copy */}
             <div className="pointer-events-none absolute inset-x-0 -top-6 mx-auto h-[260px] w-[min(880px,100%)] rounded-[48px] bg-[radial-gradient(circle_at_50%_40%,rgba(255,255,255,0.06),transparent_60%)] blur-[1px]" />
             <div className="pointer-events-none absolute inset-x-0 -top-10 mx-auto h-80 w-[min(900px,100%)] rounded-[56px] bg-[radial-gradient(circle_at_50%_50%,rgba(122,77,255,0.10),transparent_62%)] blur-[18px]" />
             <div className="pointer-events-none absolute inset-x-0 -top-10 mx-auto h-80 w-[min(900px,100%)] rounded-[56px] bg-[radial-gradient(circle_at_50%_50%,rgba(25,214,255,0.08),transparent_64%)] blur-[18px]" />
@@ -172,7 +161,6 @@ function HeroAppDev() {
                 </div>
               </motion.div>
 
-              {/* ✅ Better hierarchy: strong title + softer continuation */}
               <motion.h1
                 variants={itemFadeUp}
                 custom={1}
@@ -192,7 +180,6 @@ function HeroAppDev() {
                 product-first mindset and flawless execution.
               </motion.p>
 
-              {/* CTA row */}
               <motion.div
                 variants={itemFadeUp}
                 custom={3}
@@ -219,7 +206,6 @@ function HeroAppDev() {
                 </Button>
               </motion.div>
 
-              {/* Trust pills */}
               <motion.div
                 variants={itemFadeUp}
                 custom={4}
@@ -251,66 +237,73 @@ function HeroAppDev() {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   2) Our Technical Foundation — ART LEVEL
+   FOUNDATION — single implementation (no duplicates)
 ────────────────────────────────────────────────────────────── */
+
+type FoundationItem = {
+  title: string;
+  desc: string;
+  Icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+};
+
 function Foundation() {
-  const items = useMemo(
+  const reduce = !!useReducedMotion();
+
+  const items = React.useMemo<FoundationItem[]>(
     () => [
       {
         title: "Native & Hybrid Apps",
         desc: "Apps for iOS, Android and Web with React Native, Expo and hybrid approaches.",
         Icon: Smartphone,
-        accent: "from-[#7A4DFF]/45 to-[#19D6FF]/25",
       },
       {
         title: "PWA & Cross-Platform",
         desc: "Fast, responsive PWAs that feel native — ready for every device.",
         Icon: Globe,
-        accent: "from-[#19D6FF]/35 to-[#7A4DFF]/22",
       },
       {
         title: "UI/UX for Mobile",
         desc: "Premium mobile-first UI with micro-interactions, strong hierarchy and flawless usability.",
         Icon: LayoutTemplate,
-        accent: "from-[#7A4DFF]/40 to-[#19D6FF]/18",
       },
       {
         title: "Performance & Monitoring",
         desc: "CI/CD, performance metrics and real-time monitoring from day one.",
         Icon: Activity,
-        accent: "from-[#19D6FF]/32 to-[#7A4DFF]/18",
       },
     ],
     []
   );
 
   return (
-    <Section id="foundation" className="bg-[#050812]">
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(1200px_680px_at_50%_-10%,rgba(122,77,255,0.12),transparent_62%),radial-gradient(900px_520px_at_80%_30%,rgba(25,214,255,0.08),transparent_64%),linear-gradient(to_bottom,#050812,#050812)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.55)_60%,rgba(0,0,0,0.90)_100%)]" />
+    <Section
+      id="foundation"
+      className="relative overflow-hidden bg-[#050812] py-24 text-white"
+    >
+      {/* BACKGROUND */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(1100px_600px_at_50%_-10%,rgba(122,77,255,0.14),transparent_62%),radial-gradient(900px_520px_at_85%_25%,rgba(25,214,255,0.08),transparent_66%),linear-gradient(to_bottom,#050812,#050812)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0)_0%,rgba(0,0,0,0.55)_58%,rgba(0,0,0,0.92)_100%)]" />
 
-        <div className="absolute -bottom-56 left-[-20%] h-[820px] w-[140%] bg-[radial-gradient(closest-side,rgba(122,77,255,0.26),transparent_70%)] blur-[90px]" />
-        <div className="absolute -bottom-72 left-[-8%] h-[820px] w-[140%] bg-[radial-gradient(closest-side,rgba(90,70,255,0.16),transparent_72%)] blur-[115px]" />
+        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(rgba(255,255,255,0.45)_1px,transparent_1px)] bg-size-[34px_34px]" />
+        <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(rgba(25,214,255,0.60)_1px,transparent_1px)] bg-size-[120px_120px]" />
 
-        <div className="absolute inset-0 opacity-[0.08] bg-[radial-gradient(rgba(255,255,255,0.45)_1px,transparent_1px)] bg-size-[34px_34px]" />
-        <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(rgba(25,214,255,0.55)_1px,transparent_1px)] bg-size-[80px_80px]" />
+        <div className="absolute -left-48 bottom-10 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(122,77,255,0.18),transparent_68%)] blur-[140px]" />
+        <div className="absolute -right-56 top-24 h-[560px] w-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(25,214,255,0.12),transparent_72%)] blur-[160px]" />
 
-        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay">
-          <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.35)_1px,transparent_1px)] bg-size-[140px_140px]" />
+        <div className="absolute -bottom-[540px] left-1/2 h-[1040px] w-[1600px] -translate-x-1/2 rounded-full opacity-80">
+          <div className="absolute inset-0 rounded-full border border-transparent [background:conic-gradient(from_210deg,rgba(122,77,255,0.0),rgba(122,77,255,0.62),rgba(25,214,255,0.52),rgba(122,77,255,0.0))] [mask:radial-gradient(farthest-side,transparent_calc(100%-2px),#000_calc(100%-1px))]" />
+          <div className="absolute inset-0 rounded-full [background:conic-gradient(from_210deg,rgba(122,77,255,0.0),rgba(122,77,255,0.22),rgba(25,214,255,0.18),rgba(122,77,255,0.0))] blur-[28px] [mask:radial-gradient(farthest-side,transparent_calc(100%-10px),#000_calc(100%-1px))]" />
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-6 lg:px-10">
+      <div className="relative mx-auto max-w-6xl px-6 lg:px-10">
         <div className="text-center">
-          <div className="text-xs font-semibold tracking-[0.32em] text-[#19D6FF]/80">
+          <div className="text-[11px] font-semibold tracking-[0.34em] text-[#19D6FF]/80">
             OUR TECHNICAL FOUNDATION
           </div>
 
-          <h2
-            id="foundation-title"
-            className="mx-auto mt-6 max-w-5xl text-balance text-3xl font-semibold tracking-tight text-white/90 sm:text-4xl md:text-5xl"
-          >
+          <h2 className="mx-auto mt-6 max-w-5xl text-balance text-3xl font-semibold tracking-tight text-white/90 sm:text-4xl md:text-5xl">
             Our Technical Foundation for Scalable Apps
           </h2>
 
@@ -321,82 +314,27 @@ function Foundation() {
         </div>
 
         <motion.div
-          initial="hidden"
-          whileInView="show"
+          initial={{ opacity: 0, x: "-28%" }}
+          whileInView={{ opacity: 1, x: "28%" }}
           viewport={{ once: true, amount: 0.35 }}
-          className="mt-14 grid gap-7 md:grid-cols-2"
+          transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-none relative mt-12 h-0"
         >
-          {items.map((it, i) => (
-            <motion.article
-              key={it.title}
-              variants={itemFadeUp}
-              custom={i}
-              className="group relative overflow-hidden rounded-[30px]"
-            >
-              <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-linear-to-br from-[#7A4DFF]/25 via-white/5 to-[#19D6FF]/18 opacity-90" />
-              <div className="pointer-events-none absolute inset-0 rounded-[30px] shadow-[0_0_60px_rgba(122,77,255,0.18)]" />
-
-              <div
-                className={[
-                  "relative rounded-[30px] border border-white/10 bg-white/5 p-8",
-                  "backdrop-blur-xl",
-                  "shadow-[0_20px_60px_rgba(0,0,0,0.55)]",
-                  "transition duration-300",
-                  "group-hover:border-white/15 group-hover:bg-white/6",
-                ].join(" ")}
-              >
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] bg-[linear-gradient(to_bottom,rgba(255,255,255,0.10),transparent_40%)] opacity-60" />
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] shadow-[inset_0_1px_0_rgba(255,255,255,0.10),inset_0_-1px_0_rgba(0,0,0,0.35)]" />
-
-                <div className="pointer-events-none absolute -left-24 bottom-[-90px] h-[260px] w-[260px] rounded-full bg-[radial-gradient(circle_at_center,rgba(122,77,255,0.50),transparent_65%)] blur-[34px]" />
-                <div className="pointer-events-none absolute -right-28 top-[-90px] h-[260px] w-[260px] rounded-full bg-[radial-gradient(circle_at_center,rgba(25,214,255,0.20),transparent_72%)] blur-[42px]" />
-                <div
-                  className={`pointer-events-none absolute inset-0 rounded-[30px] bg-linear-to-br ${it.accent} opacity-25`}
-                />
-
-                <div className="relative">
-                  <div className="flex items-start gap-5">
-                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5 shadow-[0_0_26px_rgba(25,214,255,0.14)]">
-                      <it.Icon className="h-6 w-6 text-[#19D6FF]" aria-hidden />
-                    </div>
-
-                    <div className="min-w-0">
-                      <h3 className="text-xl font-semibold text-white/90">
-                        {it.title}
-                      </h3>
-                      <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">
-                        {it.desc}
-                      </p>
-
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/70">
-                          Premium UX
-                        </span>
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/70">
-                          Scalable
-                        </span>
-                        <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/70">
-                          Reliable
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-7 h-px w-full bg-white/10" />
-
-                  <div className="mt-4 flex items-center gap-2 text-sm text-[#19D6FF]/80">
-                    <Sparkles className="h-4 w-4" aria-hidden />
-                    Built for production from day one
-                  </div>
-                </div>
-
-                <div className="pointer-events-none absolute inset-0 rounded-[30px] opacity-0 transition duration-300 group-hover:opacity-100">
-                  <div className="absolute inset-0 rounded-[30px] shadow-[0_0_90px_rgba(122,77,255,0.20)]" />
-                </div>
-              </div>
-            </motion.article>
-          ))}
+          <div className="absolute left-1/2 top-0 h-[300px] w-[980px] -translate-x-1/2 -translate-y-28 -rotate-12 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.10),rgba(25,214,255,0.10),transparent)] blur-[20px]" />
         </motion.div>
+
+        <div className="mt-14 grid gap-7 md:grid-cols-2">
+          {items.map((it, i) => (
+            <ArtGlassCard
+              key={it.title}
+              index={i}
+              title={it.title}
+              desc={it.desc}
+              Icon={it.Icon}
+              reduce={reduce}
+            />
+          ))}
+        </div>
 
         <p className="mt-12 text-center text-sm text-white/45">
           Our technical edge is what prepares your product to grow from day 1.
@@ -406,8 +344,109 @@ function Foundation() {
   );
 }
 
+function ArtGlassCard({
+  index,
+  title,
+  desc,
+  Icon,
+  reduce,
+}: {
+  index: number;
+  title: string;
+  desc: string;
+  Icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  reduce: boolean;
+}) {
+  const ref = React.useRef<HTMLDivElement | null>(null);
+  const [tilt, setTilt] = React.useState({ rx: 0, ry: 0 });
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduce) return;
+    const el = ref.current;
+    if (!el) return;
+
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+
+    setTilt({
+      ry: (px - 0.5) * 5,
+      rx: (0.5 - py) * 5,
+    });
+
+    el.style.setProperty("--sx", `${px * 100}%`);
+    el.style.setProperty("--sy", `${py * 100}%`);
+  };
+
+  const onLeave = () => {
+    if (reduce) return;
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--sx", `50%`);
+    el.style.setProperty("--sy", `35%`);
+    setTilt({ rx: 0, ry: 0 });
+  };
+
+  return (
+    <motion.article
+      initial={{ opacity: 0, y: 18, filter: "blur(14px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.35 }}
+      transition={{
+        duration: 0.85,
+        delay: index * 0.08,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="group"
+    >
+      <div
+        ref={ref}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+        className="art-glass px-9 py-8"
+        style={
+          reduce
+            ? undefined
+            : {
+                transformStyle: "preserve-3d",
+                transform: `perspective(1400px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+              }
+        }
+      >
+        <div className="specular" />
+        <div className="grain" />
+
+        <div className="pointer-events-none absolute -left-12 bottom-[-46px] h-48 w-48 rounded-full bg-[radial-gradient(circle_at_center,rgba(143,94,255,0.32),transparent_70%)] blur-[46px]" />
+        <div className="pointer-events-none absolute -right-12 top-[-54px] h-48 w-48 rounded-full bg-[radial-gradient(circle_at_center,rgba(25,214,255,0.22),transparent_74%)] blur-[50px]" />
+
+        <div className="relative flex items-start gap-5">
+          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-white/12 bg-white/5">
+            <Icon className="h-6 w-6 text-[#19D6FF]" aria-hidden />
+          </div>
+
+          <div className="min-w-0">
+            <h3 className="text-[22px] font-semibold leading-snug text-white/90">
+              {title}
+            </h3>
+            <p className="mt-3 max-w-xl text-sm leading-6 text-white/55">
+              {desc}
+            </p>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-x-10 bottom-6 h-px bg-white/10 opacity-30" />
+      </div>
+    </motion.article>
+  );
+}
+
 /* ─────────────────────────────────────────────────────────────
-   3) Process
+   3) Process — ART LEVEL + Flip (hover / tap)
+   Background upgrades applied:
+   - Cosmic dark gradient (NOT black)
+   - Animated stars (subtle twinkle + drift)
+   - Extra dust/ribbon/arc layers for depth
+   NOTE: Cards/typography untouched.
 ────────────────────────────────────────────────────────────── */
 function Process() {
   const steps = useMemo(
@@ -416,92 +455,343 @@ function Process() {
         n: "01",
         title: "Discovery & Strategy",
         desc: "Clarify goals, scope, risks and the best roadmap to ship.",
+        more: "Workshops, product definition, roadmap, feasibility and timeline alignment. Output: clear scope + milestones.",
         Icon: Search,
+        accent: "purple" as const,
+        deliverable: "Scope + roadmap",
+        time: "2–5 days",
       },
       {
         n: "02",
         title: "UI/UX Design",
         desc: "Premium mobile-first UI, micro-interactions and strong hierarchy.",
+        more: "Wireframes → prototype, design system, UX flows and usability checks. Output: screens ready for dev.",
         Icon: PenTool,
+        accent: "cyan" as const,
+        deliverable: "Prototype + UI kit",
+        time: "1–2 weeks",
       },
       {
         n: "03",
         title: "Development",
         desc: "React Native / Expo / API integration with a modern stack.",
+        more: "Iterative delivery, clean architecture, CI/CD, reviews, testing and performance. Output: production-ready build.",
         Icon: Code2,
+        accent: "cyan" as const,
+        deliverable: "Production build",
+        time: "2–6 weeks",
       },
       {
         n: "04",
         title: "Launch",
         desc: "Release pipelines, store submission and production readiness.",
+        more: "App Store / Play Store submission, release checklist, monitoring setup and rollback plan. Output: safe launch.",
         Icon: Rocket,
+        accent: "purple" as const,
+        deliverable: "Store release",
+        time: "3–7 days",
       },
       {
         n: "05",
         title: "Growth",
         desc: "Monitoring, iteration and feature expansion with clear KPIs.",
+        more: "Analytics, roadmap iteration, A/B improvements and new features. Output: continuous evolution with clarity.",
         Icon: TrendingUp,
+        accent: "purple" as const,
+        deliverable: "KPIs + iterations",
+        time: "Ongoing",
       },
     ],
     []
   );
 
   return (
-    <Section id="process" className="bg-[#060812]">
-      <div className="mx-auto max-w-6xl px-6 lg:px-10">
+    <Section id="process" className="relative overflow-hidden py-24 text-white">
+      {/* ✅ COSMIC BACKGROUND (robusto + animado) */}
+      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[#070A18]">
+        {/* Nebula gradient (forte, igual referência) */}
+        <div className="absolute inset-0 process-nebula" />
+
+        {/* “Galaxy wash” pra dar profundidade */}
+        <div className="absolute inset-0 process-wash" />
+
+        {/* Stars */}
+        <div className="absolute inset-0 process-stars-1" />
+        <div className="absolute inset-0 process-stars-2" />
+
+        {/* Dust / bokeh */}
+        <div className="absolute inset-0 process-dust" />
+
+        {/* Energy ribbon */}
+        <div className="absolute left-1/2 top-[46%] h-[560px] w-[1400px] -translate-x-1/2 -rotate-6 process-ribbon" />
+
+        {/* Bottom arc ring */}
+        <div className="absolute left-1/2 bottom-[-560px] h-[1100px] w-[1700px] -translate-x-1/2 rounded-[999px] process-arc" />
+
+        {/* Vignette (legibilidade) */}
+        <div className="absolute inset-0 process-vignette" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl px-6 lg:px-10">
         <div className="text-center">
+          <div className="text-[11px] font-semibold tracking-[0.34em] text-[#19D6FF]/85">
+            OUR PROCESS
+          </div>
+
           <h2
             id="process-title"
-            className="text-3xl font-semibold tracking-tight sm:text-4xl"
+            className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl"
           >
             Our App Development Process
           </h2>
+
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-white/60 sm:text-base">
             A clear process, fast delivery, and total predictability from
             kickoff to post-launch.
           </p>
         </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, amount: 0.35 }}
-          className="mt-12 grid gap-5 md:grid-cols-5"
-        >
-          {steps.map((s, i) => (
+        <div className="relative mt-14">
+          <div className="pointer-events-none absolute left-0 right-0 top-[230px] hidden md:block">
+            <div className="h-px w-full bg-[linear-gradient(90deg,rgba(143,94,255,0.0),rgba(143,94,255,0.55),rgba(25,214,255,0.60),rgba(143,94,255,0.55),rgba(143,94,255,0.0))]" />
             <motion.div
-              key={s.n}
-              variants={itemFadeUp}
-              custom={i}
-              className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/4 p-6 backdrop-blur md:col-span-1"
-            >
-              <div className="absolute inset-0 opacity-65">
-                <div className="absolute -left-20 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle_at_center,rgba(122,77,255,0.18),transparent_60%)] blur-2xl" />
-                <div className="absolute -right-16 -bottom-16 h-48 w-48 rounded-full bg-[radial-gradient(circle_at_center,rgba(25,214,255,0.10),transparent_60%)] blur-2xl" />
-              </div>
+              initial={{ x: "-15%", opacity: 0 }}
+              whileInView={{ x: "15%", opacity: 1 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+              className="mt-[-1px] h-px w-[35%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent)] blur-[1px]"
+            />
+          </div>
 
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-semibold text-white/80">
-                    {s.n}
-                  </div>
-                  <div className="grid h-9 w-9 place-items-center rounded-2xl border border-white/10 bg-white/5">
-                    <s.Icon className="h-5 w-5 text-[#19D6FF]" aria-hidden />
-                  </div>
-                </div>
-                <h3 className="mt-4 text-base font-semibold">{s.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-white/65">{s.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.35 }}
+            className="grid gap-6 md:grid-cols-5"
+          >
+            {steps.map((s, i) => (
+              <motion.div key={s.n} variants={itemFadeUp} custom={i}>
+                <ProcessCard {...s} />
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
 
-        <p className="mt-8 text-center text-sm text-white/55">
+        <p className="mt-10 text-center text-sm text-white/55">
           You always know what&apos;s being done — and when it will be
           delivered.
         </p>
       </div>
     </Section>
+  );
+}
+
+function ProcessCard({
+  n,
+  title,
+  desc,
+  more,
+  Icon,
+  accent,
+  deliverable,
+  time,
+}: {
+  n: string;
+  title: string;
+  desc: string;
+  more: string;
+  Icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  accent: "purple" | "cyan";
+  deliverable: string;
+  time: string;
+}) {
+  const reduce = useReducedMotion();
+  const [flipped, setFlipped] = React.useState(false);
+  const [hovered, setHovered] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement | null>(null);
+
+  const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (reduce) return;
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+
+    el.style.setProperty("--sx", `${px * 100}%`);
+    el.style.setProperty("--sy", `${py * 100}%`);
+
+    // subtle tilt
+    el.style.setProperty("--rx", `${(0.5 - py) * 6}deg`);
+    el.style.setProperty("--ry", `${(px - 0.5) * 6}deg`);
+  };
+
+  const onLeave = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--sx", `50%`);
+    el.style.setProperty("--sy", `35%`);
+    el.style.setProperty("--rx", `0deg`);
+    el.style.setProperty("--ry", `0deg`);
+    setHovered(false);
+  };
+
+  const wash =
+    accent === "purple"
+      ? "bg-[radial-gradient(circle_at_20%_20%,rgba(143,94,255,0.22),transparent_62%),radial-gradient(circle_at_90%_85%,rgba(25,214,255,0.12),transparent_66%)]"
+      : "bg-[radial-gradient(circle_at_20%_20%,rgba(25,214,255,0.18),transparent_62%),radial-gradient(circle_at_90%_85%,rgba(143,94,255,0.14),transparent_66%)]";
+
+  const cardTiltStyle = reduce
+    ? undefined
+    : {
+        transformStyle: "preserve-3d" as const,
+        transform:
+          "perspective(1200px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))",
+      };
+
+  return (
+    <div
+      className="flip-scene h-[290px] w-full"
+      role="button"
+      tabIndex={0}
+      aria-label={`${n} ${title} — ${
+        flipped ? "close details" : "view details"
+      }`}
+      onClick={() => setFlipped((v) => !v)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") setFlipped((v) => !v);
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={onLeave}
+    >
+      <div className={`flip-inner ${flipped ? "is-flipped" : ""}`}>
+        {/* FRONT */}
+        <div className="flip-face">
+          <div
+            ref={ref}
+            onMouseMove={onMove}
+            className={`process-glass h-full p-6 ${
+              hovered ? "is-hovered" : ""
+            }`}
+            style={cardTiltStyle}
+          >
+            <div className="grain" />
+            <div className="specular" />
+
+            {/* color wash */}
+            <div
+              className={`pointer-events-none absolute inset-0 rounded-[26px] opacity-90 ${wash}`}
+            />
+
+            <div className="relative flex items-start justify-between">
+              <div className="flex items-baseline gap-3">
+                <div className="text-2xl font-semibold tracking-tight text-white/75">
+                  {n}
+                </div>
+                <div className="hidden sm:block text-xs font-semibold tracking-[0.25em] text-white/40">
+                  STEP
+                </div>
+              </div>
+
+              <div className="grid h-10 w-10 place-items-center rounded-2xl border border-white/12 bg-white/5">
+                <Icon className="h-5 w-5 text-[#19D6FF]" aria-hidden />
+              </div>
+            </div>
+
+            <h3 className="relative mt-4 text-[17px] font-semibold text-white/95">
+              {title}
+            </h3>
+
+            <p className="relative mt-2 text-sm leading-6 text-white/65">
+              {desc}
+            </p>
+
+            {/* Authority meta */}
+            <div className="relative mt-4 grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                <div className="text-[10px] font-semibold tracking-[0.22em] text-white/45">
+                  DELIVERABLE
+                </div>
+                <div className="mt-1 text-xs text-white/80">{deliverable}</div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                <div className="text-[10px] font-semibold tracking-[0.22em] text-white/45">
+                  TYPICAL TIME
+                </div>
+                <div className="mt-1 text-xs text-white/80">{time}</div>
+              </div>
+            </div>
+
+            {/* Micro CTA */}
+            <div className="relative mt-4 inline-flex items-center gap-2 text-xs text-white/55">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#19D6FF]" />
+              Click to see details
+            </div>
+
+            {/* dot */}
+            <div className="pointer-events-none absolute bottom-[-10px] left-1/2 hidden h-5 w-5 -translate-x-1/2 items-center justify-center md:flex">
+              <div className="absolute h-10 w-10 rounded-full bg-[radial-gradient(circle_at_center,rgba(25,214,255,0.28),transparent_60%)] blur-[12px]" />
+              <div className="h-3.5 w-3.5 rounded-full border border-white/25 bg-[#050812]" />
+              <div className="absolute h-2 w-2 rounded-full bg-[#19D6FF]" />
+            </div>
+          </div>
+        </div>
+
+        {/* BACK */}
+        <div className="flip-face flip-back">
+          <div
+            ref={ref}
+            onMouseMove={onMove}
+            className={`process-glass h-full p-6 ${
+              hovered ? "is-hovered" : ""
+            }`}
+            style={cardTiltStyle}
+          >
+            <div className="grain" />
+            <div className="specular" />
+
+            <div
+              className={`pointer-events-none absolute inset-0 rounded-[26px] opacity-90 ${wash}`}
+            />
+
+            <div className="relative flex items-start justify-between">
+              <div className="text-xs font-semibold tracking-[0.25em] text-white/70">
+                STEP {n} — DETAILS
+              </div>
+              <div className="text-xs text-white/50">Click to close</div>
+            </div>
+
+            <h4 className="relative mt-3 text-lg font-semibold text-white/90">
+              What happens here
+            </h4>
+
+            <p className="relative mt-2 text-sm leading-6 text-white/65">
+              {more}
+            </p>
+
+            <div className="relative mt-4 space-y-2 text-xs text-white/60">
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#19D6FF]" />
+                Clear deliverables & milestones
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#19D6FF]" />
+                Risks mapped early
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#19D6FF]" />
+                Predictable timeline
+              </div>
+            </div>
+
+            {/* Optional: subtle hint */}
+            <div className="relative mt-5 text-xs text-white/45">
+              Tip: press <span className="text-white/70">Enter</span> to toggle.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
