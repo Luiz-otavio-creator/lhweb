@@ -559,7 +559,7 @@ function Process() {
               whileInView={{ x: "15%", opacity: 1 }}
               viewport={{ once: true, amount: 0.35 }}
               transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-              className="mt-[-1px] h-px w-[35%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent)] blur-[1px]"
+              className="-mt-px h-px w-[35%] bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.22),transparent)] blur-[1px]"
             />
           </div>
 
