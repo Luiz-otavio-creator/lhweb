@@ -14,6 +14,7 @@ import FAQ from "@/components/product/mobile-development_old/FAQ";
 import FinalCTA from "@/components/product/mobile-development_old/FinalCTA";
 
 import type { ProductPageData } from "@/types/product";
+import TrackProductView from "@/components/analytics/TrackProductView";
 
 export const dynamic = "force-static";
 
@@ -685,6 +686,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
   return (
     <main className="min-h-screen bg-[#050816] text-slate-100">
       <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-24 md:px-6 lg:px-8 lg:pt-28">
+        <TrackProductView slug={product.slug} name={product.title} />
         <Hero data={product} />
         <ValueProps items={product.valueProps} />
         <Features items={product.features} />

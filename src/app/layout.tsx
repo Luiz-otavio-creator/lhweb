@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
+import AnalyticsProvider from "@/components/analytics/AnalyticsProvider";
+import ConsentBanner from "@/components/analytics/ConsentBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Suspense fallback={null}>
+          <AnalyticsProvider />
+        </Suspense>
         {children}
+        <ConsentBanner />
       </body>
     </html>
   );

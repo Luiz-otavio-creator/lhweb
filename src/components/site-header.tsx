@@ -11,9 +11,9 @@ export function SiteHeader() {
 
   const navItems = [
     { label: "Services", href: "/services" },
-    { label: "Portfolio", href: "#portfolio" },
-    { label: "Insights", href: "#insights" },
-    { label: "About", href: "#about" },
+    { label: "Portfolio", href: "/#portfolio" },
+    { label: "Insights", href: "/#insights" },
+    { label: "About", href: "/about" },
   ];
 
   return (
@@ -48,6 +48,9 @@ export function SiteHeader() {
           <Button
             size="default"
             className="h-10 rounded-full bg-gradient-to-r from-[#59e6ff] to-[#8f5eff] px-6 text-sm font-semibold text-[#fff] shadow-[0_14px_34px_rgba(94,241,255,0.35)] hover:opacity-90"
+            data-cta-id="header-book-call"
+            data-cta-placement="header"
+            data-cta-text="Book a Call"
           >
             Book a Call
           </Button>
@@ -93,6 +96,9 @@ export function SiteHeader() {
                   <Button
                     className="h-11 w-full rounded-xl bg-gradient-to-r from-[#59e6ff] to-[#8f5eff] text-sm font-semibold text-[#050914] shadow-[0_12px_30px_rgba(94,241,255,0.35)] hover:opacity-90"
                     onClick={() => setIsOpen(false)}
+                    data-cta-id="header-book-call-mobile"
+                    data-cta-placement="header-mobile"
+                    data-cta-text="Book a Call"
                   >
                     Book a Call
                   </Button>

@@ -32,12 +32,18 @@ export default function ServicesPage() {
               <Link
                 href="/#contact"
                 className="rounded-full bg-[#35f0ff] px-5 py-3 text-sm font-semibold text-[#050914] shadow-[0_15px_40px_-10px_rgba(53,240,255,0.55)] transition hover:bg-[#32d8e5]"
+                data-cta-id="services-book-diagnostic"
+                data-cta-placement="services-hero"
+                data-cta-text="Book a free diagnostic"
               >
                 Book a free diagnostic
               </Link>
               <Link
                 href="#services"
                 className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
+                data-cta-id="services-view-services"
+                data-cta-placement="services-hero"
+                data-cta-text="View services"
               >
                 View services
                 <ArrowUpRight className="h-4 w-4" />
@@ -156,6 +162,9 @@ export default function ServicesPage() {
                 <Link
                   href="/#contact"
                   className="inline-flex items-center justify-center rounded-full bg-[#5ef2ff] px-5 py-3 text-sm font-semibold text-[#050914] shadow-[0_18px_45px_rgba(94,242,255,0.45)] transition hover:bg-[#54dcec]"
+                  data-cta-id="services-talk-team"
+                  data-cta-placement="services-next-step"
+                  data-cta-text="Talk to the team"
                 >
                   Talk to the team
                 </Link>
