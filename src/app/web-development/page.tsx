@@ -87,7 +87,7 @@ export default function AppDevelopmentPage() {
   return (
     <main className="min-h-screen bg-[#060812] text-white selection:bg-white/10">
       <SiteHeader />
-      <TrackServiceView slug="app-development" name="App Development" />
+      <TrackServiceView slug="web-development" name="Web Development" />
       <HeroAppDev />
       <Foundation />
       <Process />
@@ -194,8 +194,8 @@ function HeroAppDev() {
                 <Button
                   className="group h-12 rounded-2xl bg-[#2d6bff] px-7 text-white shadow-[0_18px_55px_-18px_rgba(45,107,255,0.95)] hover:bg-[#245ee6]"
                   aria-label="Start your app project"
-                  data-cta-id="app-dev-hero-start"
-                  data-cta-placement="app-dev-hero"
+                  data-cta-id="web-dev-hero-start"
+                  data-cta-placement="web-dev-hero"
                   data-cta-text="Start Your App Project"
                 >
                   Start Your App Project
@@ -208,8 +208,8 @@ function HeroAppDev() {
                   variant="secondary"
                   className="h-12 rounded-2xl border border-white/12 bg-transparent px-7 text-white/70 hover:bg-white/6 hover:text-white"
                   asChild
-                  data-cta-id="app-dev-hero-case-studies"
-                  data-cta-placement="app-dev-hero"
+                  data-cta-id="web-dev-hero-case-studies"
+                  data-cta-placement="web-dev-hero"
                   data-cta-text="See Real App Case Studies"
                 >
                   <Link href="#work" aria-label="See real app case studies">
@@ -1189,8 +1189,8 @@ function FinalCTA() {
           <Button
             size="lg"
             className="rounded-2xl bg-[#19D6FF] px-7 text-[#050914] shadow-[0_18px_48px_-18px_rgba(25,214,255,0.85)] hover:bg-[#12c9ef]"
-            data-cta-id="app-dev-final-book"
-            data-cta-placement="app-dev-final"
+            data-cta-id="web-dev-final-book"
+            data-cta-placement="web-dev-final"
             data-cta-text="Book a Free Consultation"
           >
             Book a Free Consultation
@@ -1200,15 +1200,15 @@ function FinalCTA() {
             variant="secondary"
             className="rounded-2xl border border-white/10 bg-white/5 px-7 text-white hover:bg-white/10"
             asChild
-            data-cta-id="app-dev-final-cases"
-            data-cta-placement="app-dev-final"
+            data-cta-id="web-dev-final-cases"
+            data-cta-placement="web-dev-final"
             data-cta-text="See Case Studies"
           >
             <Link href="#work">See Case Studies</Link>
           </Button>
         </div>
 
-        <LeadForm formId="app-dev-contact" leadType="app-development" />
+        <LeadForm formId="web-dev-contact" leadType="web-development" />
       </div>
     </Section>
   );

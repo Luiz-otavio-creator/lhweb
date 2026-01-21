@@ -1,6 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useMemo, useRef } from "react";
+import { useInView, useReducedMotion } from "framer-motion";
 
 const AppDevOrbCanvas = dynamic(() => import("./AppDevOrbCanvas"), {
   ssr: false,
@@ -13,9 +15,25 @@ const AppDevOrbCanvas = dynamic(() => import("./AppDevOrbCanvas"), {
 });
 
 export default function AppDevOrb() {
+  const reduceMotion = useReducedMotion();
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(wrapRef, { margin: "-20% 0px -20% 0px" });
+
+  const isSafari = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent;
+    return /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+  }, []);
+
+  const quality = reduceMotion ? "low" : isSafari ? "medium" : "high";
+  const shouldRenderCanvas = inView && !reduceMotion;
+
   return (
     // ✅ bigger stage + overflow-visible = no clipping
-    <div className="relative h-[520px] w-full overflow-visible sm:h-[560px] md:h-[620px]">
+    <div
+      ref={wrapRef}
+      className="relative h-[520px] w-full overflow-visible sm:h-[560px] md:h-[620px]"
+    >
       {/* ✅ Premium halo behind the orb (organic) */}
       <div className="pointer-events-none absolute -inset-12 opacity-60 blur-3xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_45%,rgba(25,214,255,0.20),transparent_58%)]" />
@@ -28,7 +46,11 @@ export default function AppDevOrb() {
 
       {/* ✅ Canvas layer */}
       <div className="absolute inset-0 overflow-visible">
-        <AppDevOrbCanvas />
+        {shouldRenderCanvas ? (
+          <AppDevOrbCanvas quality={quality} />
+        ) : (
+          <div className="absolute inset-0 pointer-events-none opacity-55 blur-2xl bg-[radial-gradient(circle_at_55%_45%,rgba(25,214,255,0.20),transparent_60%)]" />
+        )}
       </div>
 
       {/* ✅ Top shine (subtle) */}

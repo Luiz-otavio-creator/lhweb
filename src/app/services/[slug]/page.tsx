@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 
 import { iconMap, services, type ServiceDetail } from "@/lib/services";
 import { SiteHeader } from "@/components/site-header";
+import TrackServiceView from "@/components/analytics/TrackServiceView";
 
 export const dynamic = "force-static";
 
@@ -45,6 +46,7 @@ export default async function ServicePage({
   return (
     <main className="min-h-screen bg-[#050816] text-white">
       <SiteHeader />
+      <TrackServiceView slug={service.slug} name={service.name} />
       <div className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(94,242,255,0.08),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(143,94,255,0.12),transparent_30%),radial-gradient(circle_at_50%_60%,rgba(94,242,255,0.08),transparent_35%)]" />
 
@@ -119,12 +121,18 @@ function Hero({ service }: { service: ServiceDetail }) {
             <Link
               href="/#contact"
               className="rounded-full bg-[#35f0ff] px-5 py-3 text-sm font-semibold text-[#050914] shadow-[0_15px_40px_-10px_rgba(53,240,255,0.55)] transition hover:bg-[#32d8e5]"
+              data-cta-id="service-primary-cta"
+              data-cta-placement="service-hero"
+              data-cta-text={service.primaryCta}
             >
               {service.primaryCta}
             </Link>
             <a
               href="#deliverables"
               className="inline-flex items-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/5"
+              data-cta-id="service-secondary-cta"
+              data-cta-placement="service-hero"
+              data-cta-text={service.secondaryCta}
             >
               {service.secondaryCta}
               <ArrowUpRight className="h-4 w-4" />
@@ -320,6 +328,9 @@ function FinalCTA({ service }: { service: ServiceDetail }) {
           <Link
             href="/#contact"
             className="inline-flex items-center justify-center rounded-full bg-[#5ef2ff] px-5 py-3 text-sm font-semibold text-[#050914] shadow-[0_18px_45px_rgba(94,242,255,0.45)] transition hover:bg-[#54dcec]"
+            data-cta-id="service-final-cta"
+            data-cta-placement="service-final"
+            data-cta-text="Talk to LHWEB"
           >
             Talk to LHWEB
           </Link>

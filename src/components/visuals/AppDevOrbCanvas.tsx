@@ -4,6 +4,22 @@ import * as THREE from "three";
 import { Canvas, extend, useFrame } from "@react-three/fiber";
 import React, { useMemo, useRef } from "react";
 
+type Quality = "high" | "medium" | "low";
+
+const QUALITY_SETTINGS: Record<
+  Quality,
+  { bubbleCount: number; particleCount: number; segments: number; dpr: [number, number] }
+> = {
+  high: { bubbleCount: 980, particleCount: 520, segments: 22, dpr: [1, 1.25] },
+  medium: {
+    bubbleCount: 720,
+    particleCount: 360,
+    segments: 18,
+    dpr: [1, 1.1],
+  },
+  low: { bubbleCount: 520, particleCount: 240, segments: 14, dpr: [1, 1] },
+};
+
 /* ─────────────────────────────────────────
    Reduced motion helper
 ───────────────────────────────────────── */
@@ -203,13 +219,15 @@ function BurstParticles({
   activeRef,
   originRef,
   palette,
+  count,
 }: {
   activeRef: React.MutableRefObject<number>;
   originRef: React.MutableRefObject<THREE.Vector3>;
   palette: { cyan: string; purple: string };
+  count: number;
 }) {
   const pointsRef = useRef<THREE.Points>(null);
-  const COUNT = 520;
+  const COUNT = count;
 
   const geom = useMemo(() => {
     const g = new THREE.BufferGeometry();
@@ -327,7 +345,15 @@ function BurstParticles({
    Main Orb (Correct mouse: Ray → Sphere)
    (unchanged deformation, only color improved)
 ───────────────────────────────────────── */
-function ReactiveBubbleOrb() {
+function ReactiveBubbleOrb({
+  bubbleCount,
+  particleCount,
+  segments,
+}: {
+  bubbleCount: number;
+  particleCount: number;
+  segments: number;
+}) {
   const reduced = useReducedMotion();
 
   const palette = useMemo(
@@ -354,7 +380,7 @@ function ReactiveBubbleOrb() {
   const invMat = useMemo(() => new THREE.Matrix4(), []);
   const localRay = useMemo(() => new THREE.Ray(), []);
 
-  const COUNT = 980;
+  const COUNT = bubbleCount;
   const R = 1.15;
 
   const sphere = useMemo(
@@ -371,7 +397,7 @@ function ReactiveBubbleOrb() {
   const burstOrigin = useRef(new THREE.Vector3(0, 0, 0));
   const zero = useMemo(() => new THREE.Vector3(0, 0, 0), []);
 
-  const basePoints = useMemo(() => fibonacciSpherePoints(COUNT, R), []);
+  const basePoints = useMemo(() => fibonacciSpherePoints(COUNT, R), [COUNT, R]);
   const temp = useMemo(() => new THREE.Object3D(), []);
 
   const jitter = useMemo(() => {
@@ -551,6 +577,7 @@ function ReactiveBubbleOrb() {
         activeRef={burstActive}
         originRef={burstOrigin}
         palette={particlePalette}
+        count={particleCount}
       />
 
       <instancedMesh
@@ -571,7 +598,7 @@ function ReactiveBubbleOrb() {
           hoverTarget.current = 0;
         }}
       >
-        <sphereGeometry args={[1, 22, 22]}>
+        <sphereGeometry args={[1, segments, segments]}>
           <instancedBufferAttribute
             attach="attributes-aGlow"
             args={[aGlowArray, 1]}
@@ -604,17 +631,23 @@ function ReactiveBubbleOrb() {
 /* ─────────────────────────────────────────
    Canvas
 ───────────────────────────────────────── */
-export default function AppDevOrbCanvas() {
+export default function AppDevOrbCanvas({
+  quality = "high",
+}: {
+  quality?: Quality;
+}) {
+  const settings = QUALITY_SETTINGS[quality];
+
   return (
     <Canvas
       style={{ width: "100%", height: "100%", background: "transparent" }}
       frameloop="always"
       camera={{ position: [0, 0, 3.2], fov: 42 }}
-      dpr={[1, 1.25]}
+      dpr={settings.dpr}
       gl={{
         antialias: false,
         alpha: true,
-        powerPreference: "high-performance",
+        powerPreference: quality === "low" ? "low-power" : "high-performance",
       }}
       onCreated={({ gl }) => {
         gl.setClearColor(0x000000, 0);
@@ -625,7 +658,11 @@ export default function AppDevOrbCanvas() {
       <directionalLight position={[3, 2, 2]} intensity={1.35} />
       <pointLight position={[-2, 0, 3]} intensity={0.95} />
 
-      <ReactiveBubbleOrb />
+      <ReactiveBubbleOrb
+        bubbleCount={settings.bubbleCount}
+        particleCount={settings.particleCount}
+        segments={settings.segments}
+      />
     </Canvas>
   );
 }

@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+lhweb-78226-firebase-adminsdk-fbsvc-d55bc28df5.json
 
 # debug
 npm-debug.log*
