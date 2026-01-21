@@ -17,7 +17,7 @@ export function SiteHeader() {
   ];
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-[#050914]/80 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-28 max-w-7xl items-center justify-between px-5 md:px-7 lg:px-11">
         {/* Logo + Brand */}
         {/* Logo */}
@@ -38,7 +38,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="group relative inline-flex items-center text-sm font-semibold tracking-wide text-white/80 transition hover:text-white md:text-[15px]"
+              className="group relative inline-flex items-center text-sm font-semibold tracking-wide text-foreground/80 transition hover:text-foreground md:text-[15px]"
             >
               {item.label}
               <span className="absolute inset-x-0 -bottom-2 h-px origin-center scale-x-0 bg-gradient-to-r from-[#59e6ff] to-[#8f5eff] transition-transform duration-200 group-hover:scale-x-100" />
@@ -59,14 +59,14 @@ export function SiteHeader() {
         {/* Mobile button */}
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-full border border-white/15 bg-black/30 p-2.5 text-white/90 shadow-[0_0_18px_rgba(0,0,0,0.6)] md:hidden"
+          className="inline-flex items-center justify-center rounded-full border border-border bg-background/70 p-2.5 text-foreground/90 shadow-[0_0_18px_rgba(0,0,0,0.2)] md:hidden"
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label="Open navigation"
         >
           <span className="sr-only">Toggle navigation</span>
           <div className="flex flex-col gap-1">
-            <span className="h-0.5 w-5 rounded-full bg-white" />
-            <span className="h-0.5 w-4 rounded-full bg-white" />
+            <span className="h-0.5 w-5 rounded-full bg-foreground" />
+            <span className="h-0.5 w-4 rounded-full bg-foreground" />
           </div>
         </button>
 
@@ -78,7 +78,7 @@ export function SiteHeader() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.98 }}
               transition={{ duration: 0.18, ease: "easeOut" }}
-              className="absolute right-4 top-[76px] w-64 rounded-2xl border border-white/10 bg-[#050914]/95 p-3 shadow-[0_18px_50px_rgba(0,0,0,0.85)] backdrop-blur-xl md:hidden"
+              className="absolute right-4 top-[76px] w-64 rounded-2xl border border-border bg-background/95 p-3 shadow-[0_18px_50px_rgba(0,0,0,0.25)] backdrop-blur-xl md:hidden"
             >
               <ul className="space-y-1">
                 {navItems.map((item) => (
@@ -86,7 +86,7 @@ export function SiteHeader() {
                     <Link
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="block rounded-xl px-3 py-2.5 text-[15px] font-semibold text-white/85 hover:bg-white/5 hover:text-white"
+                      className="block rounded-xl px-3 py-2.5 text-[15px] font-semibold text-foreground/85 hover:bg-accent hover:text-accent-foreground"
                     >
                       {item.label}
                     </Link>

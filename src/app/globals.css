@@ -38,6 +38,26 @@
   --radius: var(--radius);
 }
 
+.galaxy-bg {
+  background-image: url("/test/galaxySpiral.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.35;
+  transform-origin: center;
+  will-change: transform;
+  animation: galaxy-rotate 80s linear infinite;
+}
+
+@keyframes galaxy-rotate {
+  from {
+    transform: rotate(0deg) scale(1.1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.1);
+  }
+}
+
 /* ─────────────────────────────────────────────────────────────
    Theme tokens (shadcn/ui style)
 ────────────────────────────────────────────────────────────── */

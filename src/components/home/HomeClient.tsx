@@ -16,6 +16,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { ThemeSwitch } from "@/components/ui/theme-switch";
 import {
   Code2,
   Smartphone,
@@ -220,7 +221,7 @@ function Hero({ content }: { content: HomeContent }) {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden bg-[#050914] text-white pt-28 pb-20 md:pt-32 md:pb-28"
+      className="relative overflow-hidden bg-[#070b16] text-white pt-28 pb-20 md:pt-32 md:pb-28"
       aria-label="Hero – LHWEB"
     >
       {/* Background Video */}
@@ -231,11 +232,11 @@ function Hero({ content }: { content: HomeContent }) {
           loop
           muted
           playsInline
-          className="absolute inset-0 h-full w-full object-cover opacity-30"
+          className="absolute inset-0 h-full w-full object-cover opacity-55"
         />
 
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 bg-linear-to-b from-[#050914]/70 via-[#050914]/70 to-[#050914]/90" />
+        <div className="absolute inset-0 bg-linear-to-b from-[#050914]/40 via-[#050914]/45 to-[#050914]/65" />
       </div>
 
       {/* Content */}
@@ -321,7 +322,10 @@ function EnhancedCapabilities({ content }: { content: HomeContent }) {
   const cards = content.sections.capabilities.cards;
 
   return (
-    <Section id="enhanced-capabilities" className="relative bg-[#070a11]">
+    <Section
+      id="enhanced-capabilities"
+      className="relative bg-background text-foreground"
+    >
       {/* Background glow */}
       <div className="pointer-events-none absolute inset-0 flex justify-center">
         <div className="h-[600px] w-[600px] rounded-full bg-[radial-gradient(circle,rgba(0,255,255,0.08),transparent_70%)] blur-[120px]" />
@@ -339,7 +343,7 @@ function EnhancedCapabilities({ content }: { content: HomeContent }) {
             {content.sections.capabilities.eyebrow}
           </span>
 
-          <h2 className="mx-auto max-w-4xl text-3xl font-semibold leading-tight text-white sm:text-4xl md:text-5xl">
+          <h2 className="mx-auto max-w-4xl text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl">
             {content.sections.capabilities.title}
           </h2>
         </motion.div>
@@ -420,7 +424,7 @@ function EnhancedCapabilities({ content }: { content: HomeContent }) {
           viewport={{ once: true, amount: 0.5 }}
           variants={fadeUp}
         >
-          <p className="text-sm text-white/70">
+          <p className="text-sm text-foreground/70">
             {content.sections.capabilities.footerText}
           </p>
 
@@ -434,7 +438,7 @@ function EnhancedCapabilities({ content }: { content: HomeContent }) {
                 "rounded-2xl",
                 "border border-[rgba(109,0,255,0.45)]",
                 "bg-transparent",
-                "px-8 py-4 text-sm font-semibold text-white",
+                "px-8 py-4 text-sm font-semibold text-foreground",
                 "shadow-[0_0_25px_rgba(109,0,255,0.3)]",
                 "hover:bg-[rgba(109,0,255,0.1)]",
                 "hover:border-[rgba(109,0,255,0.65)]",
@@ -597,13 +601,18 @@ function CaseStudies({ content }: { content: HomeContent }) {
       id="case-studies"
       className="relative overflow-hidden bg-[#050815] py-24"
     >
+      {/* BACKGROUND IMAGE */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div className="galaxy-bg absolute -inset-[20%]" />
+      </div>
+
       {/* BACKGROUND GLOWS */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -left-20 top-0 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle_at_center,rgba(95,240,255,0.18),transparent_60%)] blur-[130px]" />
         <div className="absolute right-0 -bottom-10 h-[450px] w-[450px] rounded-full bg-[radial-gradient(circle_at_center,rgba(80,120,255,0.20),transparent_60%)] blur-[150px]" />
       </div>
 
-      <div className="relative mx-auto max-w-6xl px-6">
+      <div className="relative z-10 mx-auto max-w-6xl px-6">
         {/* HEADER */}
         <motion.div
           variants={fadeUpCases}
@@ -620,19 +629,21 @@ function CaseStudies({ content }: { content: HomeContent }) {
             {content.sections.caseStudies.title}
           </h2>
 
-          <p className="max-w-2xl text-lg text-white/70">
-            {content.sections.caseStudies.subtitle}
-          </p>
+            <div className="mt-6 flex items-center justify-between gap-8">
+            <p className="max-w-2xl text-lg text-white/70">
+              {content.sections.caseStudies.subtitle}
+            </p>
 
-          <Link
-            href={content.sections.caseStudies.cta.href || "#projects"}
-            className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-xl transition hover:bg-white/10"
-            data-cta-id={content.sections.caseStudies.cta.ctaId}
-            data-cta-placement={content.sections.caseStudies.cta.placement}
-            data-cta-text={content.sections.caseStudies.cta.text}
-          >
-            {content.sections.caseStudies.cta.text}
-          </Link>
+            <Link
+              href={content.sections.caseStudies.cta.href || "#projects"}
+              className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-xl transition hover:bg-white/10 whitespace-nowrap"
+              data-cta-id={content.sections.caseStudies.cta.ctaId}
+              data-cta-placement={content.sections.caseStudies.cta.placement}
+              data-cta-text={content.sections.caseStudies.cta.text}
+            >
+              {content.sections.caseStudies.cta.text}
+            </Link>
+            </div>
         </motion.div>
 
         {/* CARDS */}
@@ -648,36 +659,35 @@ function CaseStudies({ content }: { content: HomeContent }) {
               className="group flex flex-col gap-8 rounded-[28px] border border-white/10 bg-white/3 p-6 shadow-[0_0_65px_rgba(0,0,0,0.55)] backdrop-blur-xl md:flex-row md:p-8"
             >
               {/* IMAGE */}
-              <div className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-black/20 md:w-[45%]">
-                <Image
-                  src={card.image.downloadURL}
-                  alt={card.image.alt || card.title}
-                  width={card.image.width || 640}
-                  height={card.image.height || 360}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                  priority={index === 0}
-                />
+              <div className="space-y-4 md:w-[45%]">
+                <h3 className="text-3xl font-semibold text-white md:text-4xl">
+                  {card.title}
+                </h3>
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/20">
+                  <Image
+                    src={card.image.downloadURL}
+                    alt={card.image.alt || card.title}
+                    width={card.image.width || 640}
+                    height={card.image.height || 360}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    priority={index === 0}
+                  />
+                </div>
               </div>
 
               {/* TEXT */}
               <div className="flex flex-1 flex-col justify-between gap-4">
                 <div className="flex items-start justify-between">
-                  <div className="space-y-3">
-                    <h3 className="text-xl font-semibold text-white md:text-2xl">
-                      {card.title}
-                    </h3>
-                    <p className="max-w-xl text-sm text-white/70 md:text-base">
-                      {card.description}
-                    </p>
-                  </div>
-
                   <div className="text-right">
-                    <div className="text-4xl font-bold text-[#7ef1ff] drop-shadow-[0_0_8px_rgba(80,240,255,0.4)] md:text-5xl">
+                    <div className="text-5xl font-bold text-[#7ef1ff] drop-shadow-[0_0_8px_rgba(80,240,255,0.4)] md:text-6xl">
                       {card.metric}
                     </div>
                     <div className="text-sm text-white/70">
                       {card.metricLabel}
                     </div>
+                    <p className="mt-4 max-w-xl text-left text-lg text-white/70 md:text-xl">
+                      {card.description}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -714,6 +724,7 @@ function CaseStudies({ content }: { content: HomeContent }) {
           {content.sections.caseStudies.closingText}
         </motion.p>
       </div>
+
     </Section>
   );
 }
@@ -948,6 +959,27 @@ const fadeUpStack: Variants = {
   },
 };
 
+const techLogoMap: Record<string, string> = {
+  "Next.js": "nextdotjs",
+  React: "react",
+  Framer: "framer",
+  Vercel: "vercel",
+  "React Native": "react",
+  Swift: "swift",
+  LangChain: "langchain",
+  "Make.com": "make",
+  AWS: "https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+  "Amazon Web Services":
+    "https://raw.githubusercontent.com/devicons/devicon/master/icons/amazonwebservices/amazonwebservices-original-wordmark.svg",
+  AmazonDB:
+    "https://raw.githubusercontent.com/devicons/devicon/master/icons/dynamodb/dynamodb-original.svg",
+  "Amazon DB":
+    "https://raw.githubusercontent.com/devicons/devicon/master/icons/dynamodb/dynamodb-original.svg",
+  Firebase: "firebase",
+  Supabase: "supabase",
+  PostgreSQL: "postgresql",
+};
+
 const fadeUpCTA: Variants = {
   hidden: { opacity: 0, y: 22 },
   show: {
@@ -1028,24 +1060,32 @@ function TechStack({ content }: { content: HomeContent }) {
             hidden: {},
           }}
         >
-          {techs.map((t) => (
-            <motion.div
-              key={t.label}
-              variants={fadeUpStack}
-              whileHover={{
-                scale: 1.05,
-                translateY: -6,
-                boxShadow: "0px 0px 35px rgba(94,241,255,0.35)",
-              }}
-              transition={{ duration: 0.28 }}
-              className={clsx(
-                "group relative flex items-center gap-4 overflow-hidden",
-                "rounded-2xl border border-white/10 bg-white/3 px-6 py-4",
-                "shadow-[0_0_25px_rgba(0,0,0,0.55)] backdrop-blur-xl",
-                "transition-all duration-300",
-                "hover:border-[#59e6ff66] hover:bg-white/6"
-              )}
-            >
+          {techs.map((t) => {
+            const logo = techLogoMap[t.label];
+            const logoSrc = logo
+              ? logo.startsWith("http")
+                ? logo
+                : `https://cdn.simpleicons.org/${logo}`
+              : "";
+
+            return (
+              <motion.div
+                key={t.label}
+                variants={fadeUpStack}
+                whileHover={{
+                  scale: 1.05,
+                  translateY: -6,
+                  boxShadow: "0px 0px 35px rgba(94,241,255,0.35)",
+                }}
+                transition={{ duration: 0.28 }}
+                className={clsx(
+                  "group relative flex items-center gap-4 overflow-hidden",
+                  "rounded-2xl border border-white/10 bg-white/3 px-6 py-4",
+                  "shadow-[0_0_25px_rgba(0,0,0,0.55)] backdrop-blur-xl",
+                  "transition-all duration-300",
+                  "hover:border-[#59e6ff66] hover:bg-white/6"
+                )}
+              >
               {/* BACKGROUND GLOW */}
               <div
                 className={clsx(
@@ -1064,15 +1104,26 @@ function TechStack({ content }: { content: HomeContent }) {
                   "shadow-[0_0_18px_rgba(89,230,255,0.45)] border border-white/10"
                 )}
               >
-                {t.abbr}
+                {logoSrc ? (
+                  <img
+                    src={logoSrc}
+                    alt={`${t.label} logo`}
+                    className="h-6 w-6 object-contain"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <span className="text-sm font-semibold">{t.abbr}</span>
+                )}
               </div>
 
               {/* Label */}
               <span className="relative text-[15px] font-semibold">
                 {t.label}
               </span>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
 
         {/* CTA */}
@@ -1385,12 +1436,15 @@ function SiteFooter({ content }: { content: HomeContent }) {
         <div className="grid items-start gap-8 md:grid-cols-3">
           <div>
             <div className="flex items-center gap-2">
-              <div className="grid h-8 w-8 place-items-center rounded-xl bg-white/10">
-                <Layers className="h-4 w-4" aria-hidden />
-              </div>
-              <span className="font-semibold tracking-wide">
-                {content.footer.brandName}
-              </span>
+              <Link href="/" className="flex items-center justify-center leading-none">
+                <Image
+                  src="/hero/logo.webp"
+                  alt="LH Web"
+                  width={260}
+                  height={260}
+                  className="h-14 w-auto md:h-28 lg:h-16 drop-shadow-[0_0_22px_rgba(94,241,255,0.75)]"
+                />
+              </Link>
             </div>
 
             <p className="mt-3 max-w-sm text-sm text-white/60">
@@ -1441,6 +1495,9 @@ function SiteFooter({ content }: { content: HomeContent }) {
             <div className="mt-2">{content.footer.legal.tagline}</div>
             <div className="mt-2">
               <PrivacySettingsLink className="text-xs text-white/60 hover:text-white" />
+            </div>
+            <div className="mt-4 flex items-center justify-start md:justify-end">
+              <ThemeSwitch />
             </div>
           </div>
         </div>

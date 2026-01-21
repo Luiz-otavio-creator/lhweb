@@ -528,8 +528,8 @@ export const homeContent: HomeContent = {
     nav: {
       title: "Company",
       links: [
-        { label: "About", href: "#about" },
-        { label: "Services", href: "#capabilities" },
+        { label: "About", href: "#why" },
+        { label: "Services", href: "#enhanced-capabilities" },
         { label: "Blog", href: "/blog" },
         { label: "Contact", href: "#contact" },
       ],
@@ -537,9 +537,17 @@ export const homeContent: HomeContent = {
     social: {
       title: "Follow",
       links: [
-        { label: "GitHub", href: "#", iconKey: "github" },
-        { label: "LinkedIn", href: "#", iconKey: "linkedin" },
-        { label: "Twitter", href: "#", iconKey: "twitter" },
+        {
+          label: "GitHub",
+          href: "https://github.com/HugoMarangao",
+          iconKey: "github",
+        },
+        {
+          label: "LinkedIn",
+          href: "https://www.linkedin.com/in/hugo-marangao-17ab44219/",
+          iconKey: "linkedin",
+        },
+        { label: "Twitter", href: "https://x.com/HugoMarang39640", iconKey: "twitter" },
       ],
     },
     legal: {

@@ -17,6 +17,7 @@ export default function AnalyticsProvider() {
   const lastPath = useRef<string | null>(null);
   const depthFired = useRef(new Set<number>());
   const timeouts = useRef<number[]>([]);
+  const isDashboardRoute = pathname?.startsWith("/dashboard");
 
   const pagePath = useMemo(() => {
     const search = searchParams?.toString();
@@ -24,10 +25,15 @@ export default function AnalyticsProvider() {
   }, [pathname, searchParams]);
 
   useEffect(() => {
+    if (isDashboardRoute) return;
     captureAttribution();
-  }, []);
+  }, [isDashboardRoute]);
 
   useEffect(() => {
+    if (isDashboardRoute) {
+      setAnalyticsInstance(null);
+      return;
+    }
     const consent = getConsent();
     setHasConsent(!!consent?.analytics);
     if (consent?.analytics) {
@@ -43,10 +49,11 @@ export default function AnalyticsProvider() {
         setAnalyticsInstance(null);
       }
     });
-  }, []);
+  }, [isDashboardRoute]);
 
   useEffect(() => {
     if (!hasConsent) return;
+    if (isDashboardRoute) return;
     if (lastPath.current === pagePath) return;
 
     lastPath.current = pagePath;
@@ -76,6 +83,7 @@ export default function AnalyticsProvider() {
 
   useEffect(() => {
     if (!hasConsent) return;
+    if (isDashboardRoute) return;
 
     let scrollTimeout: number | null = null;
 
@@ -103,10 +111,11 @@ export default function AnalyticsProvider() {
       window.removeEventListener("scroll", onScroll);
       if (scrollTimeout) window.clearTimeout(scrollTimeout);
     };
-  }, [hasConsent, pagePath]);
+  }, [hasConsent, isDashboardRoute, pagePath]);
 
   useEffect(() => {
     if (!hasConsent) return;
+    if (isDashboardRoute) return;
 
     const onClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
@@ -151,7 +160,7 @@ export default function AnalyticsProvider() {
 
     window.addEventListener("click", onClick);
     return () => window.removeEventListener("click", onClick);
-  }, [hasConsent, pagePath]);
+  }, [hasConsent, isDashboardRoute, pagePath]);
 
   return null;
 }
