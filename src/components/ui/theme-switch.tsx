@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -9,15 +8,6 @@ import { Switch } from "@/components/ui/switch";
 
 export function ThemeSwitch({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <div className={cn("h-6 w-24", className)} aria-hidden="true" />;
-  }
 
   const isDark = resolvedTheme === "dark";
 

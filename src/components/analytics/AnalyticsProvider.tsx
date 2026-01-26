@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { initAnalytics } from "@/lib/firebase/client";
 import { captureAttribution } from "@/lib/analytics/attribution";
@@ -13,7 +13,6 @@ const TIME_MILESTONES = [30, 60, 120];
 export default function AnalyticsProvider() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [hasConsent, setHasConsent] = useState(false);
   const lastPath = useRef<string | null>(null);
   const depthFired = useRef(new Set<number>());
   const timeouts = useRef<number[]>([]);
@@ -23,6 +22,12 @@ export default function AnalyticsProvider() {
     const search = searchParams?.toString();
     return search ? `${pathname}?${search}` : pathname;
   }, [pathname, searchParams]);
+
+  const hasConsent = useSyncExternalStore(
+    (listener) => onConsentChange(() => listener()),
+    () => !!getConsent()?.analytics,
+    () => false
+  );
 
   useEffect(() => {
     if (isDashboardRoute) return;
@@ -34,22 +39,12 @@ export default function AnalyticsProvider() {
       setAnalyticsInstance(null);
       return;
     }
-    const consent = getConsent();
-    setHasConsent(!!consent?.analytics);
-    if (consent?.analytics) {
+    if (hasConsent) {
       void initAnalytics().then((instance) => setAnalyticsInstance(instance));
+      return;
     }
-
-    return onConsentChange((state) => {
-      const enabled = !!state?.analytics;
-      setHasConsent(enabled);
-      if (enabled) {
-        void initAnalytics().then((instance) => setAnalyticsInstance(instance));
-      } else {
-        setAnalyticsInstance(null);
-      }
-    });
-  }, [isDashboardRoute]);
+    setAnalyticsInstance(null);
+  }, [hasConsent, isDashboardRoute]);
 
   useEffect(() => {
     if (!hasConsent) return;

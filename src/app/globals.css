@@ -1392,3 +1392,72 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.45);
 }
+
+/* ─────────────────────────────────────────────────────────────
+   Performance-friendly glass variants
+   - Use reduced transparency preference and mobile breakpoints
+   - Avoid relying on -webkit-backdrop-filter as a Safari-only signal
+────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-transparency: reduce) {
+  .art-glass {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .process-glass {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.075),
+      rgba(255, 255, 255, 0.024)
+    );
+  }
+
+  .results-hero,
+  .results-panel,
+  .results-card,
+  .results-card-mobile {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .process-ribbon {
+    filter: blur(22px);
+  }
+
+  .results-energy__streaks {
+    filter: blur(12px);
+  }
+}
+
+@media (max-width: 768px) {
+  .art-glass {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .process-glass {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .results-hero,
+  .results-panel,
+  .results-card,
+  .results-card-mobile {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .process-ribbon {
+    filter: blur(24px);
+  }
+
+  .results-energy__streaks {
+    filter: blur(14px);
+  }
+}

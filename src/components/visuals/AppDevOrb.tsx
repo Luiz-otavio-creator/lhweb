@@ -1,23 +1,29 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 
 const AppDevOrbCanvas = dynamic(() => import("./AppDevOrbCanvas"), {
   ssr: false,
-  loading: () => (
+  loading: () => <OrbFallback />,
+});
+
+function OrbFallback() {
+  return (
     <div className="h-full w-full">
       <div className="absolute inset-0 pointer-events-none opacity-40 blur-2xl bg-[radial-gradient(circle_at_55%_45%,rgba(25,214,255,0.22),transparent_60%)]" />
       <div className="absolute inset-0 pointer-events-none opacity-35 blur-2xl bg-[radial-gradient(circle_at_45%_55%,rgba(122,77,255,0.22),transparent_60%)]" />
     </div>
-  ),
-});
+  );
+}
 
 export default function AppDevOrb() {
   const reduceMotion = useReducedMotion();
   const wrapRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(wrapRef, { margin: "-20% 0px -20% 0px" });
+  const inViewAnimate = useInView(wrapRef, { margin: "-20% 0px -20% 0px" });
+  const inViewRender = useInView(wrapRef, { margin: "35% 0px 35% 0px" });
+  const [isVisible, setIsVisible] = useState(true);
 
   const isSafari = useMemo(() => {
     if (typeof navigator === "undefined") return false;
@@ -26,7 +32,32 @@ export default function AppDevOrb() {
   }, []);
 
   const quality = reduceMotion ? "low" : isSafari ? "medium" : "high";
-  const shouldRenderCanvas = inView && !reduceMotion;
+  const shouldAnimate = inViewAnimate && !reduceMotion && isVisible;
+  const shouldRenderCanvas = inViewRender && !reduceMotion;
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      setIsVisible(document.visibilityState === "visible");
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    console.debug("[AppDevOrb] active:", shouldAnimate, {
+      inViewAnimate,
+      inViewRender,
+      reduceMotion,
+      isVisible,
+    });
+  }, [inViewAnimate, inViewRender, isVisible, reduceMotion, shouldAnimate]);
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    performance.mark("app-dev-orb-mounted");
+  }, []);
 
   return (
     // ✅ bigger stage + overflow-visible = no clipping
@@ -47,9 +78,9 @@ export default function AppDevOrb() {
       {/* ✅ Canvas layer */}
       <div className="absolute inset-0 overflow-visible">
         {shouldRenderCanvas ? (
-          <AppDevOrbCanvas quality={quality} />
+          <AppDevOrbCanvas quality={quality} active={shouldAnimate} />
         ) : (
-          <div className="absolute inset-0 pointer-events-none opacity-55 blur-2xl bg-[radial-gradient(circle_at_55%_45%,rgba(25,214,255,0.20),transparent_60%)]" />
+          <OrbFallback />
         )}
       </div>
 

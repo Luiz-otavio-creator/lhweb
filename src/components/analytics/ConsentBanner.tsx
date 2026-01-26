@@ -1,47 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { getConsent, setConsent, onConsentChange } from "@/lib/analytics/consent";
 
+let cachedConsent: ReturnType<typeof getConsent> = null;
+let cachedConsentJson = "";
+
+function setCachedConsent(next: ReturnType<typeof getConsent>) {
+  cachedConsent = next ?? null;
+  cachedConsentJson = next ? JSON.stringify(next) : "";
+}
+
+function getConsentSnapshot() {
+  const next = getConsent();
+  const nextJson = next ? JSON.stringify(next) : "";
+  if (nextJson !== cachedConsentJson) {
+    setCachedConsent(next);
+  }
+  return cachedConsent;
+}
+
 export default function ConsentBanner() {
-  const [visible, setVisible] = useState(false);
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [forceVisible, setForceVisible] = useState(false);
+  const consent = useSyncExternalStore(
+    (listener) =>
+      onConsentChange((state) => {
+        setCachedConsent(state);
+        listener();
+      }),
+    getConsentSnapshot,
+    () => null
+  );
+  const analyticsEnabled = !!consent?.analytics;
+  const visible = forceVisible || !consent;
 
   useEffect(() => {
-    const existing = getConsent();
-    if (!existing) {
-      setVisible(true);
-      setAnalyticsEnabled(false);
-    } else {
-      setAnalyticsEnabled(existing.analytics);
-    }
-
-    const unsubscribe = onConsentChange((state) => {
-      if (!state) {
-        setVisible(true);
-        setAnalyticsEnabled(false);
-      } else {
-        setAnalyticsEnabled(state.analytics);
-      }
-    });
-
-    const openListener = () => setVisible(true);
+    const openListener = () => setForceVisible(true);
     window.addEventListener("lhweb-open-consent", openListener);
 
     return () => {
-      unsubscribe();
       window.removeEventListener("lhweb-open-consent", openListener);
     };
   }, []);
 
   const handleAccept = () => {
     setConsent({ analytics: true, timestamp: Date.now() });
-    setVisible(false);
+    setForceVisible(false);
   };
 
   const handleDecline = () => {
     setConsent({ analytics: false, timestamp: Date.now() });
-    setVisible(false);
+    setForceVisible(false);
   };
 
   if (!visible) return null;

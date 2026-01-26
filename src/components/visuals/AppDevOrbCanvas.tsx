@@ -220,11 +220,13 @@ function BurstParticles({
   originRef,
   palette,
   count,
+  active,
 }: {
   activeRef: React.MutableRefObject<number>;
   originRef: React.MutableRefObject<THREE.Vector3>;
   palette: { cyan: string; purple: string };
   count: number;
+  active: boolean;
 }) {
   const pointsRef = useRef<THREE.Points>(null);
   const COUNT = count;
@@ -256,7 +258,7 @@ function BurstParticles({
     g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
     g.setAttribute("color", new THREE.BufferAttribute(col, 3));
     return g;
-  }, [palette.cyan, palette.purple]);
+  }, [COUNT, palette.cyan, palette.purple]);
 
   const posRef = useRef<Float32Array | null>(null);
   const velRef = useRef<Float32Array | null>(null);
@@ -294,6 +296,7 @@ function BurstParticles({
   };
 
   useFrame((state, dt) => {
+    if (!active) return;
     const pts = pointsRef.current;
     if (!pts) return;
 
@@ -349,12 +352,17 @@ function ReactiveBubbleOrb({
   bubbleCount,
   particleCount,
   segments,
+  active,
+  fpsCap,
 }: {
   bubbleCount: number;
   particleCount: number;
   segments: number;
+  active: boolean;
+  fpsCap: number;
 }) {
   const reduced = useReducedMotion();
+  const lastFrame = useRef(0);
 
   const palette = useMemo(
     () => ({
@@ -450,6 +458,11 @@ function ReactiveBubbleOrb({
   const material = useMemo(() => new BubbleGlowMaterialImpl(), []);
 
   useFrame((state, dt) => {
+    if (!active || reduced) return;
+    const now = state.clock.elapsedTime;
+    if (now - lastFrame.current < 1 / fpsCap) return;
+    lastFrame.current = now;
+
     const grp = groupRef.current;
     const inst = instRef.current;
     const mat = matRef.current;
@@ -578,22 +591,26 @@ function ReactiveBubbleOrb({
         originRef={burstOrigin}
         palette={particlePalette}
         count={particleCount}
+        active={active && !reduced}
       />
 
       <instancedMesh
         ref={instRef}
         args={[undefined, undefined, COUNT]}
         onPointerMove={(e) => {
+          if (reduced) return;
           e.stopPropagation();
           hoverTarget.current = 1;
           ndc.current.copy(e.pointer);
         }}
         onPointerOver={(e) => {
+          if (reduced) return;
           e.stopPropagation();
           hoverTarget.current = 1;
           ndc.current.copy(e.pointer);
         }}
         onPointerOut={(e) => {
+          if (reduced) return;
           e.stopPropagation();
           hoverTarget.current = 0;
         }}
@@ -633,21 +650,35 @@ function ReactiveBubbleOrb({
 ───────────────────────────────────────── */
 export default function AppDevOrbCanvas({
   quality = "high",
+  active = true,
 }: {
   quality?: Quality;
+  active?: boolean;
 }) {
   const settings = QUALITY_SETTINGS[quality];
+  const reduceMotion = useReducedMotion();
+  const isActive = active && !reduceMotion;
+
+  const dpr = useMemo(() => {
+    if (typeof window === "undefined") return settings.dpr;
+    const ua = navigator.userAgent;
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isSafari = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
+    const max = isIOS || isSafari ? 1 : settings.dpr[1];
+    return [settings.dpr[0], max] as [number, number];
+  }, [settings.dpr]);
 
   return (
     <Canvas
       style={{ width: "100%", height: "100%", background: "transparent" }}
-      frameloop="always"
+      frameloop={isActive ? "always" : "demand"}
       camera={{ position: [0, 0, 3.2], fov: 42 }}
-      dpr={settings.dpr}
+      dpr={dpr}
       gl={{
         antialias: false,
         alpha: true,
-        powerPreference: quality === "low" ? "low-power" : "high-performance",
+        powerPreference:
+          quality === "low" || !isActive ? "low-power" : "high-performance",
       }}
       onCreated={({ gl }) => {
         gl.setClearColor(0x000000, 0);
@@ -662,6 +693,8 @@ export default function AppDevOrbCanvas({
         bubbleCount={settings.bubbleCount}
         particleCount={settings.particleCount}
         segments={settings.segments}
+        active={isActive}
+        fpsCap={30}
       />
     </Canvas>
   );

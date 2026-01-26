@@ -1,13 +1,12 @@
 /* eslint-disable no-console */
 
 import type { Bucket, File } from "@google-cloud/storage";
-
-const fs = require("fs");
-const path = require("path");
-const { getApps, initializeApp, cert } = require("firebase-admin/app");
-const { getFirestore, FieldValue } = require("firebase-admin/firestore");
-const { getStorage } = require("firebase-admin/storage");
-const { homeContent } = require("../src/lib/content/homeContent");
+import fs from "node:fs";
+import path from "node:path";
+import { getApps, initializeApp, cert } from "firebase-admin/app";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
+import { homeContent } from "../src/lib/content/homeContent";
 
 const HOME_DOC_PATH = "content/pages/home/page";
 
